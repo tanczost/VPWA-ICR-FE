@@ -1,15 +1,15 @@
 <template>
   <q-page class="row items-center justify-evenly">
-    <c-options title="Tanczi hello"></c-options>
+    <c-register />
   </q-page>
 </template>
 
 <script lang="ts">
-import cOptions from 'components/OptionsComponent.vue';
+import cRegister from 'components/RegisterComponent.vue';
 import { defineComponent } from 'vue';
 
 export default defineComponent({
-  name: 'Index',
-  components: { cOptions },
+  name: 'Register',
+  components: { cRegister },
 });
 </script>

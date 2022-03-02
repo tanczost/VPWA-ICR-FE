@@ -1,15 +1,15 @@
 <template>
   <q-page class="row items-center justify-evenly">
-    <c-options title="Tanczi hello"></c-options>
+    <c-login />
   </q-page>
 </template>
 
 <script lang="ts">
-import cOptions from 'components/OptionsComponent.vue';
+import cLogin from 'components/LoginComponent.vue';
 import { defineComponent } from 'vue';
 
 export default defineComponent({
-  name: 'Index',
-  components: { cOptions },
+  name: 'Login',
+  components: { cLogin },
 });
 </script>

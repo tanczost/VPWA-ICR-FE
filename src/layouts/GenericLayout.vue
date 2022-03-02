@@ -8,20 +8,8 @@
           </q-avatar>
           Title
         </q-toolbar-title>
-
-        <!-- <q-btn dense flat round icon="menu" /> -->
       </q-toolbar>
     </q-header>
-
-    <q-drawer show-if-above v-model="leftDrawerOpen" side="left" bordered>
-      <!-- drawer content -->
-      <div v-for="n in 50" :key="n">Drawer {{ n }} / 50</div>
-    </q-drawer>
-
-    <q-drawer show-if-above v-model="rightDrawerOpen" side="right" bordered>
-      <div v-for="n in 50" :key="n">Drawer {{ n }} / 50</div>
-      <!-- drawer content -->
-    </q-drawer>
 
     <q-page-container>
       <router-view />
