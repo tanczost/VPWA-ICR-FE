@@ -42,10 +42,11 @@ export default defineComponent({
           label="Login"
           @click="login"
           class="input-alignment"
+          href="#/"
         />
         <section class="row register-alignment justify-center">
           <p>Dont have an accout? &nbsp;</p>
-          <a href=""> Sign up</a>
+          <a href="#/register"> Sign up</a>
         </section>
       </section>
     </q-card-section>

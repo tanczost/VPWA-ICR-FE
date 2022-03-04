@@ -25,8 +25,8 @@ export default defineComponent({
 <template>
   <q-card class="card-register">
     <q-card-section>
-      <div class="text-h4">Register</div>
-      <section class="row justify-between name-row">
+      <div class="text-h4">Registration</div>
+      <section class="column-xs row-sm justify-between name-row">
         <q-input
           class="input-alignment name-input-width"
           outlined
@@ -75,10 +75,11 @@ export default defineComponent({
           label="Register"
           @click="register"
           class="input-alignment"
+          href="#/login"
         />
         <section class="row register-alignment justify-center">
           <p>Already have an accout? &nbsp;</p>
-          <a href=""> Sign in</a>
+          <a href="#/login"> Sign in</a>
         </section>
       </section>
     </q-card-section>
@@ -116,6 +117,10 @@ export default defineComponent({
 @media (max-width: $breakpoint-xs-max) {
   .card-register {
     width: 80%;
+  }
+
+  .name-input-width {
+    width: 100%;
   }
 }
 </style>
