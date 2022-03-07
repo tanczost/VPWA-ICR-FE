@@ -9,6 +9,9 @@ import {
 import counter from './count';
 import { CountStateInterface } from './count/state';
 
+import userStore from './user';
+import { UserStateInterface } from './user/state';
+
 /*
  * If not building with SSR mode, you can
  * directly export the Store instantiation;
@@ -23,6 +26,7 @@ export interface StateInterface {
   // example: ExampleStateInterface;
   // Declared as unknown to avoid linting issue. Best to strongly type as per the line above.
   counter: CountStateInterface;
+  userStore: UserStateInterface;
 }
 
 // provide typings for `this.$store`
@@ -40,6 +44,7 @@ export default store(function (/* { ssrContext } */) {
   const Store = createStore<StateInterface>({
     modules: {
       counter,
+      userStore,
     },
 
     // enable strict mode (adds overhead!)

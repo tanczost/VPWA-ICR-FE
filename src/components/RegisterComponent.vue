@@ -17,6 +17,17 @@ export default defineComponent({
   computed: {},
   methods: {
     register() {
+      const userData = {
+        nickName: this.nickname,
+        firstName: this.firstname,
+        lastName: this.lastname,
+        password: this.password,
+        email: this.email,
+      };
+      this.$store
+        .dispatch('userStore/registerUser', userData)
+        .then((result) => console.log(result)) // navigate to login
+        .catch(() => console.log('kkt')); //unsuccessfull registration
       console.log('registered');
     },
   },
@@ -75,7 +86,6 @@ export default defineComponent({
           label="Register"
           @click="register"
           class="input-alignment"
-          href="#/login"
         />
         <section class="row register-alignment justify-center">
           <p>Already have an accout? &nbsp;</p>
