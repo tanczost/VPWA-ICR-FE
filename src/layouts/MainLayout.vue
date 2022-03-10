@@ -1,17 +1,21 @@
+<script>
+import { ref } from 'vue';
+import cNavbar from '../components/NavbarComponent.vue';
+
+export default {
+  setup() {
+    return {
+      icon: ref(false),
+      message: ref(['as'])
+    };
+  },
+  components: {cNavbar}
+};
+</script>
+
 <template>
   <q-layout view="hHh LpR lFr">
-    <q-header elevated class="bg-primary text-white">
-      <q-toolbar>
-        <q-toolbar-title>
-          <q-avatar>
-            <img src="https://cdn.quasar.dev/logo-v2/svg/logo-mono-white.svg" />
-          </q-avatar>
-          Title
-        </q-toolbar-title>
-
-        <!-- <q-btn dense flat round icon="menu" /> -->
-      </q-toolbar>
-    </q-header>
+    <c-navbar></c-navbar>
 
     <q-drawer show-if-above v-model="leftDrawerOpen" side="left" bordered>
       <!-- drawer content -->
@@ -53,7 +57,26 @@
     </q-drawer>
 
     <q-page-container>
-      <router-view />
+      <!-- <router-view /> -->
+       <div class="q-pa-md row justify-center">
+    <div style="width: 100%; max-width: 400px">
+      <q-chat-message
+        name="me"
+        :text="['hey, how are you?']"
+        sent
+      />
+      <q-chat-message
+        name="Lacinko"
+        :text="message"
+      />
+    </div>
+  </div>
+  <q-footer>
+        <q-toolbar class="bg-grey-3 text-black row">
+          <q-input rounded outlined dense class="WAL__field col-grow q-mr-sm" bg-color="white" v-model="message[0]" placeholder="Type a message" />
+          <q-btn round flat icon="send" />
+        </q-toolbar>
+      </q-footer>
     </q-page-container>
   </q-layout>
 </template>
