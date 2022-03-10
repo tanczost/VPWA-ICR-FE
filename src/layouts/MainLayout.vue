@@ -1,17 +1,23 @@
+<script>
+import { ref } from 'vue';
+import cNavbar from '../components/NavbarComponent.vue';
+
+export default {
+  setup() {
+    return {
+      icon: ref(false),
+      notificationModel: ref('ON'),
+      status: ref('Online'),
+      name: ref('Ladislav Sokol')
+    };
+  },
+  components: {cNavbar}
+};
+</script>
+
 <template>
   <q-layout view="hHh LpR lFr">
-    <q-header elevated class="bg-primary text-white">
-      <q-toolbar>
-        <q-toolbar-title>
-          <q-avatar>
-            <img src="https://cdn.quasar.dev/logo-v2/svg/logo-mono-white.svg" />
-          </q-avatar>
-          Title
-        </q-toolbar-title>
-
-        <!-- <q-btn dense flat round icon="menu" /> -->
-      </q-toolbar>
-    </q-header>
+    <c-navbar></c-navbar>
 
     <q-drawer show-if-above v-model="leftDrawerOpen" side="left" bordered>
       <!-- drawer content -->
