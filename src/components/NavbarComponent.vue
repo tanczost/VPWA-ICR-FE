@@ -17,9 +17,8 @@ export default {
   <q-header elevated class="bg-secondary text-white">
     <q-toolbar>
       <q-toolbar-title class="row justify-end">
-        <section class="col-11" style="align-self: center;">
-          <q-avatar style="font-size: 60px;" icon="message">
-          </q-avatar>
+        <section class="col-11" style="align-self: center">
+          <q-avatar style="font-size: 60px" icon="message"> </q-avatar>
           SWAPPER
         </section>
         <section class="col-1">
@@ -48,12 +47,7 @@ export default {
                     v-model="notificationModel"
                   />
                   <q-separator />
-                  <q-btn
-                    flat
-                    label="log out"
-                    color="primary"
-                    @click="icon = true"
-                  />
+                  <q-btn flat label="log out" color="primary" href="#/login" />
                 </div>
               </div>
             </q-btn-dropdown>
