@@ -12,23 +12,25 @@ export default defineComponent({
       email: '',
       password: '',
       confirmPassword: '',
+      successfullRegistration: true,
     };
   },
   computed: {},
   methods: {
-    register() {
-      const userData = {
+    async register() {
+      const result = (await this.$store.dispatch('userStore/registerUser', {
         nickName: this.nickname,
         firstName: this.firstname,
         lastName: this.lastname,
         password: this.password,
         email: this.email,
-      };
-      this.$store
-        .dispatch('userStore/registerUser', userData)
-        .then((result) => console.log(result)) // navigate to login
-        .catch(() => console.log('kkt')); //unsuccessfull registration
-      console.log('registered');
+      })) as boolean;
+
+      if (result) {
+        this.$q.notify({ message: 'Register successful', color: 'green' });
+      } else {
+        this.$q.notify({ message: 'Register error', color: 'red' });
+      }
     },
   },
 });

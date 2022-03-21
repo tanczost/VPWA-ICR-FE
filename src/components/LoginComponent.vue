@@ -6,14 +6,28 @@ export default defineComponent({
   data() {
     return {
       count: 2,
-      username: '',
+      nickName: '',
       password: '',
     };
   },
   computed: {},
   methods: {
-    login() {
-      console.log(this.username + this.password);
+    async login() {
+      const result = (await this.$store.dispatch('userStore/loginUser', {
+        nickName: this.nickName,
+        password: this.password,
+      })) as boolean;
+
+      console.log('before if');
+
+      if (result) {
+        console.log('in if');
+        this.$q.notify({ message: 'Login successful', color: 'green' });
+        void this.$router.push('/');
+        console.log('afterpush');
+      } else {
+        this.$q.notify({ message: 'Bad credentials', color: 'red' });
+      }
     },
   },
 });
@@ -26,7 +40,7 @@ export default defineComponent({
       <q-input
         class="input-alignment"
         outlined
-        v-model="username"
+        v-model="nickName"
         label="Username"
       />
       <q-input
@@ -42,7 +56,6 @@ export default defineComponent({
           label="Login"
           @click="login"
           class="input-alignment"
-          href="#/"
         />
         <section class="row register-alignment justify-center">
           <p>Dont have an accout? &nbsp;</p>
