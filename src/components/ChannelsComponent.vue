@@ -1,8 +1,6 @@
 <script lang="ts">
 // import { ref } from 'vue';
-
 import { defineComponent } from 'vue';
-
 interface State {
   showNewChannelDialog: boolean;
   showInviteDialog: boolean;
@@ -10,7 +8,6 @@ interface State {
   channelNameInvite: number;
   name: string;
 }
-
 export default defineComponent({
   data(): State {
     return {

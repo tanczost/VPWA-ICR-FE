@@ -14,7 +14,7 @@ export default defineComponent({
       icon: false,
       message: [],
       sendMessage: '',
-      typers: ['Laci', 'Patyo', 'Tomi'],
+      typers: ['Laci', 'Pato', 'Tanczi'],
     };
   },
   methods: {
@@ -54,14 +54,22 @@ export default defineComponent({
       </div>
     </div>
 
-    <q-footer
-      v-for="channels in 3"
-      :key="channels"
-      style="bottom: 50px"
-      class="bg-white column"
-    >
-      <b v-for:="name in typers" :key="name" class="row">
-        <i style="color: black"> {{ name }} typing... &nbsp;</i>
+    <q-footer style="bottom: 50px; padding-left: 20px" class="bg-white row">
+      <section v-if="typers.length < 4">
+        <b v-for:="name in typers" :key="name" style="color: black">
+          {{ name }},&nbsp;
+        </b>
+      </section>
+      <section v-else>
+        <b v-for:="name in typers.slice(0, 3)" :key="name" style="color: black">
+          {{ name }},&nbsp;
+        </b>
+        <b style="color: black">and more&nbsp;</b>
+      </section>
+      <b v-if="typers.length == 1" style="color: black">is&nbsp;</b>
+      <b v-else style="color: black">are&nbsp;</b>
+      <b>
+        <i style="color: black">typing...&nbsp;</i>
       </b>
     </q-footer>
     <q-footer>
