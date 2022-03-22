@@ -1,32 +1,37 @@
 <script lang="ts">
-import { ref } from 'vue';
+// import { ref } from 'vue';
+
+import { defineComponent } from 'vue';
 
 interface State {
   showNewChannelDialog: boolean;
   showInviteDialog: boolean;
-  private: boolean;
+  isChannelPrivate: boolean;
   channelNameInvite: number;
+  name: string;
 }
 
-export default {
+export default defineComponent({
   data(): State {
     return {
-      showNewChannelDialog: ref(false),
-      showInviteDialog: ref(false),
-      private: ref(false),
+      showNewChannelDialog: false,
+      showInviteDialog: false,
+      isChannelPrivate: false,
       channelNameInvite: 0,
+      name: '',
     };
   },
   methods: {
     openChannel() {
       console.log('REEEEEEEEEE');
     },
-    setChannelName(channelName) {
-      this.channelNameInvite = channelName as number;
+    setChannelName(channelName: number) {
+      this.channelNameInvite;
+      this.channelNameInvite = channelName;
       this.showInviteDialog = true;
     },
   },
-};
+});
 </script>
 
 <template>
@@ -96,7 +101,7 @@ export default {
           label="Channel name"
         />
         <div>
-          <q-checkbox v-model="private" label="Private" />
+          <q-checkbox v-model="isChannelPrivate" label="Private" />
         </div>
       </q-card-section>
 
