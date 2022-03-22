@@ -10,6 +10,9 @@ import VuexPersistence from 'vuex-persist';
 import counter from './count';
 import { CountStateInterface } from './count/state';
 
+import drawerStore from './drawerStore';
+import { DrawerStateInterface } from './drawerStore/state';
+
 import userStore from './user';
 import { UserStateInterface } from './user/state';
 
@@ -32,6 +35,7 @@ export interface StateInterface {
   counter: CountStateInterface;
   userStore: UserStateInterface;
   channelStore: ChannelStateInterface;
+  drawerStore: DrawerStateInterface;
 }
 
 // provide typings for `this.$store`
@@ -55,6 +59,7 @@ export default store(function (/* { ssrContext } */) {
       counter,
       userStore,
       channelStore,
+      drawerStore,
     },
 
     // enable strict mode (adds overhead!)

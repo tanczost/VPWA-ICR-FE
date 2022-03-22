@@ -1,9 +1,27 @@
 <script lang="ts">
-export default {};
+import { defineComponent } from 'vue';
+
+export default defineComponent({
+  computed: {
+    isRightSideDrawerOpened: {
+      get() {
+        return this.$store.state.drawerStore.rightDrawerOpened;
+      },
+      set(value: boolean) {
+        this.$store.commit('drawerStore/setRightDrawer', value);
+      },
+    },
+  },
+});
 </script>
 
 <template>
-  <q-drawer show-if-above side="right" bordered class="q-ml-xs">
+  <q-drawer
+    v-model="isRightSideDrawerOpened"
+    side="right"
+    bordered
+    class="q-ml-xs"
+  >
     <div class="text-h4 q-mt-sm" style="padding-left: 15px">
       <q-icon name="admin_panel_settings" />
       Admins
