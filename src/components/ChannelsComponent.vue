@@ -22,6 +22,14 @@ export default defineComponent({
   },
   computed: {
     ...mapGetters('userStore', { getMyNickName: 'getMyNickName' }),
+    isLeftSideDrawerOpened: {
+      get() {
+        return this.$store.state.drawerStore.leftDrawerOpened;
+      },
+      set(value: boolean) {
+        this.$store.commit('drawerStore/setLeftDrawer', value);
+      },
+    },
   },
   methods: {
     openChannel() {
@@ -52,16 +60,6 @@ export default defineComponent({
       } else {
         this.$q.notify({ message: 'Channel can not be created', color: 'red' });
       }
-    },
-  },
-  computed: {
-    isLeftSideDrawerOpened: {
-      get() {
-        return this.$store.state.drawerStore.leftDrawerOpened;
-      },
-      set(value: boolean) {
-        this.$store.commit('drawerStore/setLeftDrawer', value);
-      },
     },
   },
 });
