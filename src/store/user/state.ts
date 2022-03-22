@@ -1,7 +1,12 @@
 import { User } from '../../components/models';
 
+export interface TokenState {
+  token: string;
+  type: string;
+}
+
 export interface UserStateInterface {
-  token: string | null;
+  token: TokenState | null;
   user: User | null;
 }
 

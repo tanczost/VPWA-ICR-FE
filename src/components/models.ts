@@ -15,3 +15,18 @@ export interface User {
   status: number;
   notify: boolean;
 }
+
+export interface Message {
+  text: string;
+  mentions: null;
+}
+
+export interface Channel {
+  id: number | undefined;
+  private: boolean;
+  name: string;
+  lastActivity: string | undefined;
+  ownerName: string;
+  users: User[];
+  messages: Message[];
+}
