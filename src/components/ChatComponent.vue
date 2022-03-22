@@ -10,6 +10,7 @@ interface State {
   currentTyper: string;
   currentText: string;
   showCurrentTypersDialog: boolean;
+  showLeaveConfirmationDialog: boolean;
 }
 
 export default defineComponent({
@@ -18,11 +19,12 @@ export default defineComponent({
       icon: false,
       message: [],
       sendMessage: '',
-      typers: ['Laci', 'Pato', 'Tanczi', 'Lakatos Brandon'],
+      typers: ['Laci', 'Palo', 'Tanczi', 'Lakatos Brandon'],
       showAllTypersDialog: false,
       currentTyper: '',
       currentText: '',
       showCurrentTypersDialog: false,
+      showLeaveConfirmationDialog: false,
     };
   },
   methods: {
@@ -44,16 +46,22 @@ export default defineComponent({
 
 <template>
   <q-page-container>
-    <div class="text-h3 q-ma-sm">
-      <q-icon name="question_answer" />
-      Chat - Spolok juznych obcanov 🐗
-    </div>
+    <section class="row">
+      <div class="text-h3 q-ma-sm chat-title">Spolok juznych obcanov 🐗</div>
+      <div class="centerY">
+        <q-btn
+          @click="showLeaveConfirmationDialog = true"
+          color="red"
+          label="Leave"
+        />
+      </div>
+    </section>
     <q-separator />
     <div class="q-pa-md row justify-center">
       <div style="width: 90%">
         <q-chat-message name="me" :text="['hey, how are you?']" sent />
         <b>
-          <i style="color: red"> New messages &nbsp;</i>
+          <i class="text-red"> New messages &nbsp;</i>
         </b>
         <q-separator color="red" />
         <div v-for="text in message" :key="text">
@@ -68,12 +76,12 @@ export default defineComponent({
       </div>
     </div>
 
-    <q-footer style="bottom: 50px; padding-left: 20px" class="bg-white row">
+    <q-footer class="bg-white row bottom-text">
       <section v-if="typers.length < 4">
         <b
           v-for:="name in typers"
           :key="name"
-          style="color: black; cursor: pointer"
+          class="name"
           @click="openCurrentMessage(name)"
         >
           {{ name }}&nbsp;
@@ -83,23 +91,22 @@ export default defineComponent({
         <b
           v-for:="name in typers.slice(0, 3)"
           :key="name"
-          style="color: black; cursor: pointer"
+          class="name"
           @click="openCurrentMessage(name)"
         >
           {{ name }}&nbsp;
         </b>
-        <b
-          style="color: black; cursor: pointer"
-          @click="showAllTypersDialog = true"
-        >
-          and more&nbsp;
-        </b>
+        <b class="name" @click="showAllTypersDialog = true"> and more&nbsp; </b>
       </section>
-      <p v-if="typers.length == 1" style="color: black; margin-bottom: 0px">
+      <p
+        v-if="typers.length == 1"
+        class="text-black"
+        style="margin-bottom: 0px"
+      >
         is&nbsp;
       </p>
-      <p v-else style="color: black; margin-bottom: 0px">are&nbsp;</p>
-      <p style="color: black; margin-bottom: 0px">typing...&nbsp;</p>
+      <p v-else class="text-black" style="margin-bottom: 0px">are&nbsp;</p>
+      <p class="text-black" style="margin-bottom: 0px">typing...&nbsp;</p>
     </q-footer>
     <q-footer>
       <q-toolbar class="bg-grey-3 text-black row">
@@ -150,6 +157,52 @@ export default defineComponent({
       </q-card-section>
     </q-card>
   </q-dialog>
+
+  <q-dialog v-model="showLeaveConfirmationDialog" persistent>
+    <q-card style="min-width: 40%">
+      <q-card-section>
+        <div class="text-h6">Do you want to leave this group?</div>
+      </q-card-section>
+
+      <q-card-actions align="right" class="text-primary">
+        <q-btn flat label="Negative" v-close-popup color="red" />
+        <q-btn flat label="YES!" v-close-popup />
+      </q-card-actions>
+    </q-card>
+  </q-dialog>
 </template>
 
-<style lang="scss"></style>
+<style lang="scss">
+.bottom-text {
+  bottom: 50px;
+  padding-left: 20px;
+}
+.name {
+  color: black;
+  cursor: pointer;
+}
+.centerY {
+  display: flex;
+  align-items: center;
+}
+.chat-title {
+  width: 90%;
+}
+
+@media (max-width: $breakpoint-sm-max) {
+  .chat-title {
+    font-size: 35px;
+    width: 100%;
+  }
+  .centerY {
+    display: flex;
+    align-items: flex-end;
+  }
+}
+
+@media (max-width: $breakpoint-sm-min) {
+  .chat-title {
+    font-size: 25px;
+  }
+}
+</style>

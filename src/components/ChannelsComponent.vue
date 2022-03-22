@@ -122,7 +122,7 @@ export default defineComponent({
   </q-drawer>
 
   <q-dialog v-model="showNewChannelDialog" persistent>
-    <q-card style="min-width: 350px">
+    <q-card style="min-width: 40%">
       <q-card-section>
         <div class="text-h6">Create new channel</div>
       </q-card-section>
@@ -147,7 +147,7 @@ export default defineComponent({
   </q-dialog>
 
   <q-dialog v-model="showInviteDialog" persistent>
-    <q-card style="min-width: 350px">
+    <q-card style="min-width: 40%">
       <q-card-section>
         <div class="text-h6">New channel invite: {{ channelNameInvite }}</div>
       </q-card-section>

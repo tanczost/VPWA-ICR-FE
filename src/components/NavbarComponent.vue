@@ -50,8 +50,13 @@ export default defineComponent({
         @click="isLeftSideDrawerOpen = !isLeftSideDrawerOpen"
       />
       <q-toolbar-title class="row justify-end">
-        <section class="col-11" style="align-self: center">SWAPPER</section>
-        <section class="col-1">
+        <section
+          class="col-md-11 col-sm-10 col-xs-8"
+          style="align-self: center"
+        >
+          SWAPPER
+        </section>
+        <section class="col-md-1 col-sm-2 col-xs-4">
           <div class="q-pa-md">
             <q-btn-dropdown class="glossy" color="black" icon="settings">
               <div class="row no-wrap q-pa-md">
