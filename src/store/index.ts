@@ -9,6 +9,9 @@ import {
 import counter from './count';
 import { CountStateInterface } from './count/state';
 
+import drawerStore from './drawerStore';
+import { DrawerStateInterface } from './drawerStore/state';
+
 import userStore from './user';
 import { UserStateInterface } from './user/state';
 
@@ -27,6 +30,7 @@ export interface StateInterface {
   // Declared as unknown to avoid linting issue. Best to strongly type as per the line above.
   counter: CountStateInterface;
   userStore: UserStateInterface;
+  drawerStore: DrawerStateInterface;
 }
 
 // provide typings for `this.$store`
@@ -45,6 +49,7 @@ export default store(function (/* { ssrContext } */) {
     modules: {
       counter,
       userStore,
+      drawerStore,
     },
 
     // enable strict mode (adds overhead!)

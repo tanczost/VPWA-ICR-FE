@@ -17,17 +17,40 @@ export default defineComponent({
       name: 'Ladislav Sokol',
     };
   },
+  computed: {
+    isLeftSideDrawerOpen: {
+      get() {
+        return this.$store.state.drawerStore.leftDrawerOpened;
+      },
+      set(value: boolean) {
+        this.$store.commit('drawerStore/setLeftDrawer', value);
+      },
+    },
+    isRightSideDrawerOpen: {
+      get() {
+        return this.$store.state.drawerStore.rightDrawerOpened;
+      },
+      set(value: boolean) {
+        this.$store.commit('drawerStore/setRightDrawer', value);
+      },
+    },
+  },
 });
 </script>
 
 <template>
   <q-header elevated class="bg-secondary text-white">
     <q-toolbar>
+      <q-btn
+        dense
+        flat
+        round
+        icon="groups"
+        style="font-size: 20px"
+        @click="isLeftSideDrawerOpen = !isLeftSideDrawerOpen"
+      />
       <q-toolbar-title class="row justify-end">
-        <section class="col-11" style="align-self: center">
-          <q-avatar style="font-size: 60px" icon="message"> </q-avatar>
-          SWAPPER
-        </section>
+        <section class="col-11" style="align-self: center">SWAPPER</section>
         <section class="col-1">
           <div class="q-pa-md">
             <q-btn-dropdown class="glossy" color="black" icon="settings">
@@ -100,7 +123,14 @@ export default defineComponent({
         </q-card>
       </q-dialog>
 
-      <!-- <q-btn dense flat round icon="menu" /> -->
+      <q-btn
+        dense
+        round
+        flat
+        icon="person_search"
+        style="font-size: 20px"
+        @click="isRightSideDrawerOpen = !isRightSideDrawerOpen"
+      />
     </q-toolbar>
   </q-header>
 </template>
