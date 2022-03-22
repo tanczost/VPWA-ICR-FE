@@ -91,7 +91,7 @@ export default defineComponent({
       <q-btn
         icon="add_circle_outline"
         flat
-        label="create new group"
+        label="create new channel"
         color="primary"
         style="width: 100%"
         @click="showNewChannelDialog = true"
