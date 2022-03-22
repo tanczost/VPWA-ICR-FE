@@ -6,6 +6,10 @@ interface State {
   message: string[];
   sendMessage: string;
   typers: string[];
+  showAllTypersDialog: boolean;
+  currentTyper: string;
+  currentText: string;
+  showCurrentTypersDialog: boolean;
 }
 
 export default defineComponent({
@@ -14,7 +18,11 @@ export default defineComponent({
       icon: false,
       message: [],
       sendMessage: '',
-      typers: ['Laci', 'Pato', 'Tanczi'],
+      typers: ['Laci', 'Pato', 'Tanczi', 'Lakatos Brandon'],
+      showAllTypersDialog: false,
+      currentTyper: '',
+      currentText: '',
+      showCurrentTypersDialog: false,
     };
   },
   methods: {
@@ -23,6 +31,12 @@ export default defineComponent({
         this.message.push(this.sendMessage);
       }
       this.sendMessage = '';
+    },
+    openCurrentMessage(name: string) {
+      this.currentTyper = name;
+      this.currentText =
+        "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including";
+      this.showCurrentTypersDialog = true;
     },
   },
 });
@@ -56,21 +70,36 @@ export default defineComponent({
 
     <q-footer style="bottom: 50px; padding-left: 20px" class="bg-white row">
       <section v-if="typers.length < 4">
-        <b v-for:="name in typers" :key="name" style="color: black">
-          {{ name }},&nbsp;
+        <b
+          v-for:="name in typers"
+          :key="name"
+          style="color: black; cursor: pointer"
+          @click="openCurrentMessage(name)"
+        >
+          {{ name }}&nbsp;
         </b>
       </section>
       <section v-else>
-        <b v-for:="name in typers.slice(0, 3)" :key="name" style="color: black">
-          {{ name }},&nbsp;
+        <b
+          v-for:="name in typers.slice(0, 3)"
+          :key="name"
+          style="color: black; cursor: pointer"
+          @click="openCurrentMessage(name)"
+        >
+          {{ name }}&nbsp;
         </b>
-        <b style="color: black">and more&nbsp;</b>
+        <b
+          style="color: black; cursor: pointer"
+          @click="showAllTypersDialog = true"
+        >
+          and more&nbsp;
+        </b>
       </section>
-      <b v-if="typers.length == 1" style="color: black">is&nbsp;</b>
-      <b v-else style="color: black">are&nbsp;</b>
-      <b>
-        <i style="color: black">typing...&nbsp;</i>
-      </b>
+      <p v-if="typers.length == 1" style="color: black; margin-bottom: 0px">
+        is&nbsp;
+      </p>
+      <p v-else style="color: black; margin-bottom: 0px">are&nbsp;</p>
+      <p style="color: black; margin-bottom: 0px">typing...&nbsp;</p>
     </q-footer>
     <q-footer>
       <q-toolbar class="bg-grey-3 text-black row">
@@ -88,6 +117,39 @@ export default defineComponent({
       </q-toolbar>
     </q-footer>
   </q-page-container>
+
+  <q-dialog v-model="showAllTypersDialog" persistent>
+    <q-card style="width: 40%">
+      <q-card-section class="row items-center q-pb-none">
+        <div class="text-h5">Current text messages</div>
+        <q-space />
+        <q-btn icon="close" flat round dense v-close-popup />
+      </q-card-section>
+
+      <q-card-section>
+        <div v-for:="name in typers" :key="name">
+          <b>{{ name }}</b
+          >: random text haha
+        </div>
+      </q-card-section>
+    </q-card>
+  </q-dialog>
+
+  <q-dialog v-model="showCurrentTypersDialog" persistent>
+    <q-card style="width: 40%">
+      <q-card-section class="row items-center q-pb-none">
+        <div class="text-h5">{{ currentTyper }}'s current message</div>
+        <q-space />
+        <q-btn icon="close" flat round dense v-close-popup />
+      </q-card-section>
+
+      <q-card-section>
+        <p>
+          {{ currentText }}
+        </p>
+      </q-card-section>
+    </q-card>
+  </q-dialog>
 </template>
 
 <style lang="scss"></style>
