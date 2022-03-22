@@ -1,21 +1,26 @@
 <script lang="ts">
-import { ref } from 'vue';
+import { defineComponent } from 'vue';
 import cNavbar from '../components/NavbarComponent.vue';
 import cChannels from '../components/ChannelsComponent.vue';
 import cPeople from '../components/PeopleComponent.vue';
 import cChat from '../components/ChatComponent.vue';
 
-export default {
-  setup() {
+interface State {
+  icon: boolean;
+  message: string[];
+  sendMessage: string;
+}
+
+export default defineComponent({
+  data(): State {
     return {
-      icon: ref(false),
-      message: ref(['']),
-      sendMessage: ref(''),
+      icon: false,
+      message: [''],
+      sendMessage: '',
     };
   },
-
   components: { cNavbar, cChannels, cPeople, cChat },
-};
+});
 </script>
 
 <template>

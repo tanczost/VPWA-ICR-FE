@@ -1,6 +1,4 @@
 <script lang="ts">
-// import { ref } from 'vue';
-
 import { defineComponent } from 'vue';
 
 interface State {

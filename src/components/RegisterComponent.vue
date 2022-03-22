@@ -1,9 +1,20 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 
+interface State {
+  count: number;
+  firstname: string;
+  lastname: string;
+  nickname: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+  successfullRegistration: boolean;
+}
+
 export default defineComponent({
   name: 'RegisterComponent',
-  data() {
+  data(): State {
     return {
       count: 2,
       firstname: '',

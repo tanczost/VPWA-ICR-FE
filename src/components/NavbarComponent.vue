@@ -1,16 +1,23 @@
 <script lang="ts">
-import { ref } from 'vue';
+import { defineComponent } from 'vue';
 
-export default {
-  setup() {
+interface State {
+  icon: boolean;
+  notificationModel: string;
+  status: string;
+  name: string;
+}
+
+export default defineComponent({
+  data(): State {
     return {
-      icon: ref(false),
-      notificationModel: ref('ON'),
-      status: ref('Online'),
-      name: ref('Ladislav Sokol'),
+      icon: false,
+      notificationModel: 'ON',
+      status: 'Online',
+      name: 'Ladislav Sokol',
     };
   },
-};
+});
 </script>
 
 <template>
