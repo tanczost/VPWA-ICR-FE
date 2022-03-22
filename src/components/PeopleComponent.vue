@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 export default {};
 </script>
 
@@ -11,11 +11,11 @@ export default {};
     <div class="q-pa-md">
       <div v-for="n in 2" :key="n" class="q-mt-sm">
         <q-list bordered separator>
-          <q-item v-ripple>
-            <q-item-section class="row">
-              {{ n }} admin
+          <q-item v-ripple nowrap>
+            <q-item-section side="left" style="max-width: 5%">
               <q-icon name="fiber_manual_record" style="color: red" />
             </q-item-section>
+            <q-item-section side="right"> {{ n }} Admin </q-item-section>
           </q-item>
         </q-list>
       </div>
@@ -28,11 +28,11 @@ export default {};
     <div class="q-pa-md">
       <div v-for="n in 50" :key="n">
         <q-list bordered separator>
-          <q-item v-ripple>
-            <q-item-section>
-              {{ n }} user
+          <q-item v-ripple nowrap>
+            <q-item-section side="left" style="max-width: 5%">
               <q-icon name="fiber_manual_record" style="color: green" />
             </q-item-section>
+            <q-item-section side="right"> {{ n }} user </q-item-section>
           </q-item>
         </q-list>
       </div>

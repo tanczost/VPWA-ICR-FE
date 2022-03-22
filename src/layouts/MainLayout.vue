@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 import { ref } from 'vue';
 import cNavbar from '../components/NavbarComponent.vue';
 import cChannels from '../components/ChannelsComponent.vue';
