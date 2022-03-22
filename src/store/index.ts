@@ -5,12 +5,16 @@ import {
   Store as VuexStore,
   useStore as vuexUseStore,
 } from 'vuex';
+import VuexPersistence from 'vuex-persist';
 
 import counter from './count';
 import { CountStateInterface } from './count/state';
 
 import userStore from './user';
 import { UserStateInterface } from './user/state';
+
+import channelStore from './channel';
+import { ChannelStateInterface } from './channel/state';
 
 /*
  * If not building with SSR mode, you can
@@ -27,6 +31,7 @@ export interface StateInterface {
   // Declared as unknown to avoid linting issue. Best to strongly type as per the line above.
   counter: CountStateInterface;
   userStore: UserStateInterface;
+  channelStore: ChannelStateInterface;
 }
 
 // provide typings for `this.$store`
@@ -40,16 +45,22 @@ declare module '@vue/runtime-core' {
 export const storeKey: InjectionKey<VuexStore<StateInterface>> =
   Symbol('vuex-key');
 
+const vuexLocal = new VuexPersistence<StateInterface>({
+  storage: window.localStorage,
+});
+
 export default store(function (/* { ssrContext } */) {
   const Store = createStore<StateInterface>({
     modules: {
       counter,
       userStore,
+      channelStore,
     },
 
     // enable strict mode (adds overhead!)
     // for dev mode and --debug builds only
     strict: !!process.env.DEBUGGING,
+    plugins: [vuexLocal.plugin],
   });
 
   return Store;

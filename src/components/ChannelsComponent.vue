@@ -2,13 +2,14 @@
 // import { ref } from 'vue';
 
 import { defineComponent } from 'vue';
+import { mapGetters } from 'vuex';
 
 interface State {
   showNewChannelDialog: boolean;
   showInviteDialog: boolean;
-  isChannelPrivate: boolean;
+  isNewChannelPrivate: boolean;
   channelNameInvite: number;
-  name: string;
+  newChannelName: string;
 }
 
 export default defineComponent({
@@ -16,10 +17,13 @@ export default defineComponent({
     return {
       showNewChannelDialog: false,
       showInviteDialog: false,
-      isChannelPrivate: false,
+      isNewChannelPrivate: false,
       channelNameInvite: 0,
-      name: '',
+      newChannelName: '',
     };
+  },
+  computed: {
+    ...mapGetters('userStore', { getMyNickName: 'getMyNickName' }),
   },
   methods: {
     openChannel() {
@@ -29,6 +33,27 @@ export default defineComponent({
       this.channelNameInvite;
       this.channelNameInvite = channelName;
       this.showInviteDialog = true;
+    },
+    async createChannel() {
+      const result = (await this.$store.dispatch('channelStore/addChannel', {
+        name: this.newChannelName,
+        private: this.isNewChannelPrivate,
+        ownerUserName: this.getMyNickName as string,
+        users: [],
+        messages: [],
+      })) as boolean;
+
+      if (result) {
+        this.$q.notify({
+          message: 'Channel  successfully created',
+          color: 'green',
+        });
+        this.showNewChannelDialog = false;
+        this.newChannelName = '';
+        this.isNewChannelPrivate = false;
+      } else {
+        this.$q.notify({ message: 'Channel can not be created', color: 'red' });
+      }
     },
   },
 });
@@ -95,19 +120,19 @@ export default defineComponent({
       <q-card-section class="q-pt-none">
         <q-input
           outlined
-          v-model="name"
+          v-model="newChannelName"
           autofocus
           @keyup.enter="showNewChannelDialog = false"
           label="Channel name"
         />
         <div>
-          <q-checkbox v-model="isChannelPrivate" label="Private" />
+          <q-checkbox v-model="isNewChannelPrivate" label="Private" />
         </div>
       </q-card-section>
 
       <q-card-actions align="right" class="text-primary">
         <q-btn flat label="Cancel" v-close-popup />
-        <q-btn flat label="Create" v-close-popup />
+        <q-btn flat label="Create" v-close-popup @click="createChannel" />
       </q-card-actions>
     </q-card>
   </q-dialog>

@@ -18,13 +18,9 @@ export default defineComponent({
         password: this.password,
       })) as boolean;
 
-      console.log('before if');
-
       if (result) {
-        console.log('in if');
         this.$q.notify({ message: 'Login successful', color: 'green' });
-        void this.$router.push('/');
-        console.log('afterpush');
+        // void this.$router.push('/');
       } else {
         this.$q.notify({ message: 'Bad credentials', color: 'red' });
       }
