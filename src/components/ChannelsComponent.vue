@@ -1,5 +1,4 @@
 <script lang="ts">
-// import { ref } from 'vue';
 import { defineComponent } from 'vue';
 interface State {
   showNewChannelDialog: boolean;
@@ -28,12 +27,26 @@ export default defineComponent({
       this.showInviteDialog = true;
     },
   },
+  computed: {
+    isLeftSideDrawerOpened: {
+      get() {
+        return this.$store.state.drawerStore.leftDrawerOpened;
+      },
+      set(value: boolean) {
+        this.$store.commit('drawerStore/setLeftDrawer', value);
+      },
+    },
+  },
 });
 </script>
 
 <template>
-  <q-drawer show-if-above side="left" bordered class="q-ml-xs">
-    <!-- drawer content -->
+  <q-drawer
+    v-model="isLeftSideDrawerOpened"
+    side="left"
+    bordered
+    class="q-ml-xs"
+  >
     <div class="text-h4 q-mt-sm" style="text-align: center">Channels</div>
     <div class="q-pa-md channels-drawer" style="max-width: 350px">
       <q-list bordered class="rounded-borders">
@@ -76,7 +89,7 @@ export default defineComponent({
       <q-btn
         icon="add_circle_outline"
         flat
-        label="create new group"
+        label="create new channel"
         color="primary"
         style="width: 100%"
         @click="showNewChannelDialog = true"
