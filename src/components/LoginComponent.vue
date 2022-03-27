@@ -18,18 +18,18 @@ export default defineComponent({
   },
   computed: {},
   methods: {
-    async login() {
-      const result = (await this.$store.dispatch('userStore/loginUser', {
-        nickName: this.nickName,
-        password: this.password,
-      })) as boolean;
+    login() {
+      // const result = (await this.$store.dispatch('userStore/loginUser', {
+      //   nickName: this.nickName,
+      //   password: this.password,
+      // })) as boolean;
 
-      if (result) {
-        this.$q.notify({ message: 'Login successful', color: 'green' });
-        // void this.$router.push('/');
-      } else {
-        this.$q.notify({ message: 'Bad credentials', color: 'red' });
-      }
+      // if (result) {
+      this.$q.notify({ message: 'Login successful', color: 'green' });
+      // void this.$router.push('/');
+      // } else {
+      //   this.$q.notify({ message: 'Bad credentials', color: 'red' });
+      // }
     },
   },
 });

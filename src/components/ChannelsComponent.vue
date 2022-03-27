@@ -32,33 +32,38 @@ export default defineComponent({
   },
   methods: {
     openChannel() {
-      console.log('REEEEEEEEEE');
+      console.log('Open channel');
     },
     setChannelName(channelName: number) {
       this.channelNameInvite;
       this.channelNameInvite = channelName;
       this.showInviteDialog = true;
     },
-    async createChannel() {
-      const result = (await this.$store.dispatch('channelStore/addChannel', {
-        name: this.newChannelName,
-        private: this.isNewChannelPrivate,
-        ownerUserName: this.getMyNickName as string,
-        users: [],
-        messages: [],
-      })) as boolean;
+    createChannel() {
+      // const result = (await this.$store.dispatch('channelStore/addChannel', {
+      //   name: this.newChannelName,
+      //   private: this.isNewChannelPrivate,
+      //   ownerUserName: this.getMyNickName as string,
+      //   users: [],
+      //   messages: [],
+      // })) as boolean;
 
-      if (result) {
-        this.$q.notify({
-          message: 'Channel  successfully created',
-          color: 'green',
-        });
-        this.showNewChannelDialog = false;
-        this.newChannelName = '';
-        this.isNewChannelPrivate = false;
-      } else {
-        this.$q.notify({ message: 'Channel can not be created', color: 'red' });
-      }
+      // if (result) {
+      //   this.$q.notify({
+      //     message: 'Channel  successfully created',
+      //     color: 'green',
+      //   });
+      //   this.showNewChannelDialog = false;
+      //   this.newChannelName = '';
+      //   this.isNewChannelPrivate = false;
+      // } else {
+      //   this.$q.notify({ message: 'Channel can not be created', color: 'red' });
+      // }
+
+      this.$q.notify({
+        message: 'Channel  successfully created',
+        color: 'green',
+      });
     },
   },
 });

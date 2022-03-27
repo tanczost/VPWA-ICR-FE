@@ -28,20 +28,20 @@ export default defineComponent({
   },
   computed: {},
   methods: {
-    async register() {
-      const result = (await this.$store.dispatch('userStore/registerUser', {
-        nickName: this.nickname,
-        firstName: this.firstname,
-        lastName: this.lastname,
-        password: this.password,
-        email: this.email,
-      })) as boolean;
+    register() {
+      // const result = (await this.$store.dispatch('userStore/registerUser', {
+      //   nickName: this.nickname,
+      //   firstName: this.firstname,
+      //   lastName: this.lastname,
+      //   password: this.password,
+      //   email: this.email,
+      // })) as boolean;
 
-      if (result) {
-        this.$q.notify({ message: 'Register successful', color: 'green' });
-      } else {
-        this.$q.notify({ message: 'Register error', color: 'red' });
-      }
+      // if (result) {
+      this.$q.notify({ message: 'Register successful', color: 'green' });
+      // } else {
+      //   this.$q.notify({ message: 'Register error', color: 'red' });
+      // }
     },
   },
 });

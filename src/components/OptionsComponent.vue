@@ -2,6 +2,8 @@
 import { defineComponent } from 'vue';
 import { mapGetters, mapMutations } from 'vuex';
 
+// Template for getters and mutations NOT USED
+
 export default defineComponent({
   name: 'OptionsComponent',
   props: {

@@ -18,7 +18,7 @@ export default defineComponent({
       icon: false,
       message: [],
       sendMessage: '',
-      typers: ['Laci', 'Pato', 'Tanczi', 'Lakatos Brandon'],
+      typers: ['Laci', 'Pato', 'Tanczi'],
       showAllTypersDialog: false,
       currentTyper: '',
       currentText: '',
