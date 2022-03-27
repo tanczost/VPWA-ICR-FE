@@ -126,7 +126,7 @@ export default defineComponent({
   </q-page-container>
 
   <q-dialog v-model="showAllTypersDialog" persistent>
-    <q-card style="width: 40%">
+    <q-card class="chat-dialog">
       <q-card-section class="row items-center q-pb-none">
         <div class="text-h5">Current text messages</div>
         <q-space />
@@ -143,7 +143,7 @@ export default defineComponent({
   </q-dialog>
 
   <q-dialog v-model="showCurrentTypersDialog" persistent>
-    <q-card style="width: 40%">
+    <q-card class="chat-dialog">
       <q-card-section class="row items-center q-pb-none">
         <div class="text-h5">{{ currentTyper }}'s current message</div>
         <q-space />
@@ -186,23 +186,44 @@ export default defineComponent({
   align-items: center;
 }
 .chat-title {
-  width: 90%;
+  width: 85%;
+}
+
+.chat-dialog {
+  width: 40%;
+}
+
+@media (max-width: 1200px) {
+  .chat-title {
+    width: 78%;
+  }
 }
 
 @media (max-width: $breakpoint-sm-max) {
   .chat-title {
     font-size: 35px;
-    width: 100%;
+    width: 70%;
   }
   .centerY {
     display: flex;
     align-items: flex-end;
+    flex-direction: row;
+    justify-content: flex-end;
+    width: 25%;
+  }
+
+  .chat-dialog {
+    width: 60%;
   }
 }
 
 @media (max-width: $breakpoint-sm-min) {
   .chat-title {
     font-size: 25px;
+  }
+
+  .chat-dialog {
+    width: 80%;
   }
 }
 </style>

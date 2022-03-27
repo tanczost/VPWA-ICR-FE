@@ -32,6 +32,7 @@ export default defineComponent({
   },
   methods: {
     openChannel() {
+      void this.$router.push('/1');
       console.log('Open channel');
     },
     setChannelName(channelName: number) {
