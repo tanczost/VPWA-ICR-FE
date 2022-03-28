@@ -18,18 +18,23 @@ export default defineComponent({
   },
   computed: {},
   methods: {
-    login() {
-      // const result = (await this.$store.dispatch('userStore/loginUser', {
-      //   nickName: this.nickName,
-      //   password: this.password,
-      // })) as boolean;
+    async login() {
+      const result = (await this.$store.dispatch('userStore/loginUser', {
+        nickName: this.nickName,
+        password: this.password,
+      })) as boolean;
 
-      // if (result) {
-      this.$q.notify({ message: 'Login successful', color: 'green' });
-      // void this.$router.push('/');
-      // } else {
-      //   this.$q.notify({ message: 'Bad credentials', color: 'red' });
-      // }
+      if (result) {
+        const channels = (await this.$store.dispatch(
+          'channelStore/getChannels'
+        )) as boolean;
+        console.log(channels);
+
+        this.$q.notify({ message: 'Login successful', color: 'green' });
+        void this.$router.push('/');
+      } else {
+        this.$q.notify({ message: 'Bad credentials', color: 'red' });
+      }
     },
   },
 });

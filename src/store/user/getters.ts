@@ -11,6 +11,10 @@ const getters: GetterTree<UserStateInterface, StateInterface> = {
     if (state.token) return `bearer ${state.token?.token}`;
     else return '';
   },
+
+  getUserInfo(state: UserStateInterface) {
+    return state.user;
+  },
 };
 
 export default getters;

@@ -21,12 +21,17 @@ export interface Message {
   mentions: null;
 }
 
+export interface ChannelUsers {
+  username: string;
+  state: number;
+}
+
 export interface Channel {
   id: number | undefined;
   private: boolean;
   name: string;
   lastActivity: string | undefined;
   ownerName: string;
-  users: User[];
+  users: ChannelUsers[];
   messages: Message[];
 }

@@ -27,6 +27,13 @@ export default defineComponent({
       showLeaveConfirmationDialog: false,
     };
   },
+  computed: {
+    getChannelByID() {
+      return this.$store.state.channelStore.channels.find(
+        (channel) => channel.id == +this.$route.params.groupId
+      );
+    },
+  },
   methods: {
     send() {
       if (this.sendMessage != '') {
@@ -47,7 +54,9 @@ export default defineComponent({
 <template>
   <q-page-container>
     <section class="row">
-      <div class="text-h3 q-ma-sm chat-title">Spolok juznych obcanov 🐗</div>
+      <div class="text-h3 q-ma-sm chat-title">
+        {{ getChannelByID?.name }}
+      </div>
       <div class="centerY">
         <q-btn
           @click="showLeaveConfirmationDialog = true"
@@ -75,7 +84,6 @@ export default defineComponent({
         </div>
       </div>
     </div>
-
     <q-footer class="bg-white row bottom-text">
       <section v-if="typers.length < 4">
         <b

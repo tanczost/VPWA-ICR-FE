@@ -21,6 +21,10 @@ export default defineComponent({
   },
   computed: {
     ...mapGetters('userStore', { getMyNickName: 'getMyNickName' }),
+    ...mapGetters('channelStore', {
+      getPrivateChannels: 'getPrivateChannels',
+      getPublicChannels: 'getPublicChannels',
+    }),
     isLeftSideDrawerOpened: {
       get() {
         return this.$store.state.drawerStore.leftDrawerOpened;
@@ -31,40 +35,34 @@ export default defineComponent({
     },
   },
   methods: {
-    openChannel() {
-      void this.$router.push('/1');
-      console.log('Open channel');
+    openChannel(channelId: number) {
+      void this.$router.push(`/${channelId}`);
     },
     setChannelName(channelName: number) {
       this.channelNameInvite;
       this.channelNameInvite = channelName;
       this.showInviteDialog = true;
     },
-    createChannel() {
-      // const result = (await this.$store.dispatch('channelStore/addChannel', {
-      //   name: this.newChannelName,
-      //   private: this.isNewChannelPrivate,
-      //   ownerUserName: this.getMyNickName as string,
-      //   users: [],
-      //   messages: [],
-      // })) as boolean;
+    async createChannel() {
+      const result = (await this.$store.dispatch('channelStore/addChannel', {
+        name: this.newChannelName,
+        private: this.isNewChannelPrivate,
+        ownerUserName: this.getMyNickName as string,
+        users: [],
+        messages: [],
+      })) as boolean;
 
-      // if (result) {
-      //   this.$q.notify({
-      //     message: 'Channel  successfully created',
-      //     color: 'green',
-      //   });
-      //   this.showNewChannelDialog = false;
-      //   this.newChannelName = '';
-      //   this.isNewChannelPrivate = false;
-      // } else {
-      //   this.$q.notify({ message: 'Channel can not be created', color: 'red' });
-      // }
-
-      this.$q.notify({
-        message: 'Channel  successfully created',
-        color: 'green',
-      });
+      if (result) {
+        this.$q.notify({
+          message: 'Channel  successfully created',
+          color: 'green',
+        });
+        this.showNewChannelDialog = false;
+        this.newChannelName = '';
+        this.isNewChannelPrivate = false;
+      } else {
+        this.$q.notify({ message: 'Channel can not be created', color: 'red' });
+      }
     },
   },
 });
@@ -86,9 +84,12 @@ export default defineComponent({
           label="Private"
         >
           <q-list dense bordered padding>
-            <div v-for="channelName in 50" :key="channelName">
-              <q-item clickable v-ripple @click="openChannel">
-                <q-item-section>{{ channelName }} Item private </q-item-section>
+            <div
+              v-for="channelName in getPrivateChannels"
+              :key="channelName.id"
+            >
+              <q-item clickable v-ripple @click="openChannel(channelName.id)">
+                <q-item-section>{{ channelName.name }} </q-item-section>
               </q-item>
             </div>
           </q-list>
@@ -96,9 +97,9 @@ export default defineComponent({
 
         <q-expansion-item expand-separator icon="public" label="Public">
           <q-list dense bordered padding>
-            <div v-for="channelName in 50" :key="channelName">
-              <q-item clickable v-ripple @click="openChannel">
-                <q-item-section>{{ channelName }} Item </q-item-section>
+            <div v-for="channelName in getPublicChannels" :key="channelName.id">
+              <q-item clickable v-ripple @click="openChannel(channelName.id)">
+                <q-item-section>{{ channelName.name }} </q-item-section>
               </q-item>
             </div>
           </q-list>

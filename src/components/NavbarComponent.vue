@@ -1,5 +1,6 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
+import { mapGetters } from 'vuex';
 
 interface State {
   icon: boolean;
@@ -18,6 +19,7 @@ export default defineComponent({
     };
   },
   computed: {
+    ...mapGetters('userStore', { getUserInfo: 'getUserInfo' }),
     isLeftSideDrawerOpen: {
       get() {
         return this.$store.state.drawerStore.leftDrawerOpened;
@@ -62,8 +64,10 @@ export default defineComponent({
               <div class="row no-wrap q-pa-md">
                 <div class="column">
                   <div class="text-subtitle1 q-mt-md q-mb-xs column">
-                    <strong>{{ name }}</strong>
-                    {{ status }}
+                    <strong style="text-transform: uppercase">{{
+                      getUserInfo.nickName
+                    }}</strong>
+                    {{ getUserInfo.state }}
                   </div>
                   <q-separator />
                   <div class="text-subtitle1 q-mt-md q-mb-xs">
