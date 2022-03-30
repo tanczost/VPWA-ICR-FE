@@ -1,21 +1,16 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import { mapGetters } from 'vuex';
+import { UserState } from './models';
 
 interface State {
   icon: boolean;
-  notificationModel: string;
-  status: string;
-  name: string;
 }
 
 export default defineComponent({
   data(): State {
     return {
       icon: false,
-      notificationModel: 'ON',
-      status: 'Online',
-      name: 'Ladislav Sokol',
     };
   },
   computed: {
@@ -35,6 +30,11 @@ export default defineComponent({
       set(value: boolean) {
         this.$store.commit('drawerStore/setRightDrawer', value);
       },
+    },
+  },
+  methods: {
+    getMyState(state: number): string {
+      return UserState[state - 1];
     },
   },
 });
@@ -67,7 +67,7 @@ export default defineComponent({
                     <strong style="text-transform: uppercase">{{
                       getUserInfo.nickName
                     }}</strong>
-                    {{ getUserInfo.state }}
+                    {{ getMyState(getUserInfo.state) }}
                   </div>
                   <q-separator />
                   <div class="text-subtitle1 q-mt-md q-mb-xs">
@@ -78,15 +78,7 @@ export default defineComponent({
                       @click="icon = true"
                     />
                   </div>
-                  <q-toggle
-                    :label="'Notifications: ' + notificationModel"
-                    color="green"
-                    false-value="OFF"
-                    true-value="ON"
-                    v-model="notificationModel"
-                  />
-                  <q-separator />
-                  <q-btn flat label="log out" color="primary" href="#/login" />
+                  <q-btn flat label="log out" color="red" href="#/login" />
                 </div>
               </div>
             </q-btn-dropdown>

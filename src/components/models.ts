@@ -35,3 +35,9 @@ export interface Channel {
   users: ChannelUsers[];
   messages: Message[];
 }
+
+export enum UserState {
+  'Online',
+  'Do Not Disturb',
+  'Offline',
+}
