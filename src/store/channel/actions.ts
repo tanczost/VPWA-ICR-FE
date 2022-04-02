@@ -1,16 +1,17 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { api } from 'src/boot/axios';
 import { Channel, ChannelUsers } from 'src/components/models';
+import { channelService } from 'src/services';
 import { ActionTree } from 'vuex';
 import { StateInterface } from '../index';
 import { ChannelStateInterface } from './state';
 
-interface NewChannelState {
+export interface NewChannelState {
   name: string;
   private: boolean;
 }
 
-interface ChannelResponse {
+export interface ChannelResponse {
   userId: number;
   channels: Channel[];
 }
@@ -28,16 +29,10 @@ const actions: ActionTree<ChannelStateInterface, StateInterface> = {
         private: channel.private,
       };
 
-      const result = await api.post('/channel/', {
-        ...requestData,
-      });
+      await channelService.addChannel(requestData);
 
-      if (result.status === 200) {
-        this.commit('channelStore/addChannel', { ...channel });
-        return true;
-      }
-
-      return false;
+      this.commit('channelStore/addChannel', { ...channel });
+      return true;
     } catch (error) {
       console.error(error);
       return false;
@@ -48,45 +43,39 @@ const actions: ActionTree<ChannelStateInterface, StateInterface> = {
     try {
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
 
-      const allChannelsResult = await api.get<ChannelResponse>(
-        '/user/my-channels/'
-      );
+      const allChannelsResult = await channelService.getChannels();
 
-      if (allChannelsResult.status === 200) {
-        const userChannelsResult = await Promise.all(
-          allChannelsResult.data.channels.map(async (currentChannel) => {
-            if (currentChannel.id != undefined) {
-              try {
-                const channelUsersResult = await api.get<ChannelUser>(
-                  `/channel/${currentChannel.id}/users`
-                );
+      const userChannelsResult = await Promise.all(
+        allChannelsResult.channels.map(async (currentChannel) => {
+          if (currentChannel.id != undefined) {
+            try {
+              const channelUsersResult = await api.get<ChannelUser>(
+                `/channel/${currentChannel.id}/users`
+              );
 
-                if (channelUsersResult.status == 200) {
-                  const channel: Channel = {
-                    id: currentChannel.id,
-                    private: currentChannel.private,
-                    name: currentChannel.name,
-                    lastActivity: undefined,
-                    ownerName: 'Jozo',
-                    users: channelUsersResult.data.users,
-                    messages: [],
-                  };
-                  return channel;
-                }
-
-                return false;
-              } catch (error) {
-                console.error(error);
-                return false;
+              if (channelUsersResult.status == 200) {
+                const channel: Channel = {
+                  id: currentChannel.id,
+                  private: currentChannel.private,
+                  name: currentChannel.name,
+                  lastActivity: undefined,
+                  ownerName: 'Jozo',
+                  users: channelUsersResult.data.users,
+                  messages: [],
+                };
+                return channel;
               }
-            }
-          })
-        );
-        this.commit('channelStore/storeChannels', userChannelsResult);
-        return true;
-      }
 
-      return false;
+              return false;
+            } catch (error) {
+              console.error(error);
+              return false;
+            }
+          }
+        })
+      );
+      this.commit('channelStore/storeChannels', userChannelsResult);
+      return true;
     } catch (error) {
       console.error(error);
       return false;
