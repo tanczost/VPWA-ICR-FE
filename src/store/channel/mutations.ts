@@ -12,6 +12,10 @@ const mutation: MutationTree<ChannelStateInterface> = {
       (channel) => channel.id !== channelId
     );
   },
+
+  storeChannels(state: ChannelStateInterface, channels: Channel[]) {
+    state.channels.push(...channels);
+  },
 };
 
 export default mutation;

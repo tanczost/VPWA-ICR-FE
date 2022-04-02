@@ -35,7 +35,12 @@ export default defineComponent({
 
       void this.$store
         .dispatch('userStore/login', data)
-        .then(() => {
+        .then(async () => {
+          const channels = (await this.$store.dispatch(
+            'channelStore/getChannels'
+          )) as boolean;
+
+          console.log(channels);
           this.$q.notify({ message: 'Login successful', color: 'green' });
           return this.$router.push(this.redirectTo);
         })

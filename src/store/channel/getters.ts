@@ -3,8 +3,11 @@ import { StateInterface } from '../index';
 import { ChannelStateInterface } from './state';
 
 const getters: GetterTree<ChannelStateInterface, StateInterface> = {
-  someGetter(/* context */) {
-    // your code
+  getPrivateChannels(state: ChannelStateInterface) {
+    return state.channels.filter((channel) => channel.private);
+  },
+  getPublicChannels(state: ChannelStateInterface) {
+    return state.channels.filter((channel) => !channel.private);
   },
 };
 
