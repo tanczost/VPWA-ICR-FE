@@ -1,57 +1,59 @@
+/* eslint-disable @typescript-eslint/no-unsafe-call */
 import { ActionTree } from 'vuex';
 import { StateInterface } from '../index';
 import { UserStateInterface } from './state';
-import { User } from '../../components/models';
-import axios from 'axios';
-
-interface LoginData {
-  nickName: string;
-  password: string;
-}
-
-interface LoginResponse {
-  token: string;
-  user: User;
-}
+import { authService, authManager } from 'src/services';
+import { User } from 'src/components/models';
+import { LoginData } from 'src/services/AuthService';
 
 const actions: ActionTree<UserStateInterface, StateInterface> = {
-  async registerUser({}, user: User): Promise<boolean> {
+  async check({ commit }) {
     try {
-      const result = await axios.post('http://localhost:3333/registration/', {
-        ...user,
-      });
-
-      if (result.status === 200) {
-        return true;
-      }
-
-      return false;
-    } catch (error) {
-      console.error(error);
-      return false;
+      commit('AUTH_START');
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      const user = await authService.me();
+      commit('AUTH_SUCCESS', user);
+      console.log(user);
+      return user !== null;
+    } catch (err) {
+      commit('AUTH_ERROR', err);
+      throw err;
     }
   },
-
-  async loginUser({}, loginData: LoginData): Promise<boolean> {
+  async register({ commit }, form: User) {
     try {
-      const result = await axios.post<LoginResponse>(
-        'http://localhost:3333/login/',
-        {
-          ...loginData,
-        }
-      );
-
-      this.commit('userStore/saveUser', result.data.user);
-      this.commit('userStore/saveToken', result.data.token);
-
-      if (result.status === 200) {
-        return true;
-      }
-
-      return false;
-    } catch (error) {
-      console.error(error);
-      return false;
+      commit('AUTH_START');
+      const user = await authService.register(form);
+      commit('AUTH_SUCCESS', null);
+      return user;
+    } catch (err) {
+      commit('AUTH_ERROR', err);
+      throw err;
+    }
+  },
+  async login({ commit }, credentials: LoginData) {
+    try {
+      commit('AUTH_START');
+      const apiToken = await authService.login(credentials);
+      commit('AUTH_SUCCESS', apiToken);
+      // save api token to local storage and notify listeners
+      authManager.setToken(apiToken.token);
+      return apiToken;
+    } catch (err) {
+      commit('AUTH_ERROR', err);
+      throw err;
+    }
+  },
+  async logout({ commit }) {
+    try {
+      commit('AUTH_START');
+      await authService.logout();
+      commit('AUTH_SUCCESS', null);
+      // remove api token and notify listeners
+      authManager.removeToken();
+    } catch (err) {
+      commit('AUTH_ERROR', err);
+      throw err;
     }
   },
 };

@@ -1,5 +1,7 @@
 <script lang="ts">
+import { LoginData } from 'src/services/AuthService';
 import { defineComponent } from 'vue';
+import { RouteLocationRaw } from 'vue-router';
 
 interface State {
   count: number;
@@ -16,20 +18,30 @@ export default defineComponent({
       password: '',
     };
   },
-  computed: {},
+  computed: {
+    redirectTo(): RouteLocationRaw {
+      return (this.$route.query.redirect as string) || { name: 'home' };
+    },
+    loading(): boolean {
+      return this.$store.state.userStore.status === 'pending';
+    },
+  },
   methods: {
     login() {
-      // const result = (await this.$store.dispatch('userStore/loginUser', {
-      //   nickName: this.nickName,
-      //   password: this.password,
-      // })) as boolean;
+      const data: LoginData = {
+        nickName: this.nickName,
+        password: this.password,
+      };
 
-      // if (result) {
-      this.$q.notify({ message: 'Login successful', color: 'green' });
-      // void this.$router.push('/');
-      // } else {
-      //   this.$q.notify({ message: 'Bad credentials', color: 'red' });
-      // }
+      void this.$store
+        .dispatch('userStore/login', data)
+        .then(() => {
+          this.$q.notify({ message: 'Login successful', color: 'green' });
+          return this.$router.push(this.redirectTo);
+        })
+        .catch(() => {
+          this.$q.notify({ message: 'Bad credentials', color: 'red' });
+        });
     },
   },
 });
@@ -57,11 +69,12 @@ export default defineComponent({
           color="primary"
           label="Login"
           @click="login"
+          :loading="loading"
           class="input-alignment"
         />
         <section class="row register-alignment justify-center">
           <p>Dont have an accout? &nbsp;</p>
-          <a href="#/register"> Sign up</a>
+          <a href="/auth/register"> Sign up</a>
         </section>
       </section>
     </q-card-section>

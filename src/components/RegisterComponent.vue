@@ -1,5 +1,6 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
+import { RouteLocationRaw } from 'vue-router';
 
 interface State {
   count: number;
@@ -26,22 +27,28 @@ export default defineComponent({
       successfullRegistration: true,
     };
   },
-  computed: {},
+  computed: {
+    redirectTo(): RouteLocationRaw {
+      return { name: 'login' };
+    },
+    loading(): boolean {
+      return this.$store.state.userStore.status === 'pending';
+    },
+  },
   methods: {
     register() {
-      // const result = (await this.$store.dispatch('userStore/registerUser', {
-      //   nickName: this.nickname,
-      //   firstName: this.firstname,
-      //   lastName: this.lastname,
-      //   password: this.password,
-      //   email: this.email,
-      // })) as boolean;
+      const data = {
+        nickName: this.nickname,
+        firstName: this.firstname,
+        lastName: this.lastname,
+        password: this.password,
+        email: this.email,
+      };
 
-      // if (result) {
-      this.$q.notify({ message: 'Register successful', color: 'green' });
-      // } else {
-      //   this.$q.notify({ message: 'Register error', color: 'red' });
-      // }
+      void this.$store.dispatch('userStore/register', data).then(() => {
+        this.$q.notify({ message: 'Register successful', color: 'green' });
+        return this.$router.push(this.redirectTo);
+      });
     },
   },
 });
@@ -98,11 +105,12 @@ export default defineComponent({
           color="primary"
           label="Register"
           @click="register"
+          :loading="loading"
           class="input-alignment"
         />
         <section class="row register-alignment justify-center">
           <p>Already have an accout? &nbsp;</p>
-          <a href="#/login"> Sign in</a>
+          <a href="/auth/login"> Sign in</a>
         </section>
       </section>
     </q-card-section>

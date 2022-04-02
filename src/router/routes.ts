@@ -3,22 +3,39 @@ import { RouteRecordRaw } from 'vue-router';
 const routes: RouteRecordRaw[] = [
   {
     path: '/',
+    // try redirect to home route
+    redirect: () => ({ name: 'home' }),
+  },
+  {
+    path: '/auth',
     component: () => import('layouts/MainLayout.vue'),
+    children: [
+      {
+        path: 'register',
+        name: 'register',
+        meta: { guestOnly: true },
+        component: () => import('pages/Register.vue'),
+      },
+      {
+        path: 'login',
+        name: 'login',
+        meta: { guestOnly: true },
+        component: () => import('pages/Login.vue'),
+      },
+    ],
   },
   {
-    path: '/:groupId',
+    path: '/channels/:groupId?',
+    // channels requires auth
+    meta: { requiresAuth: true },
     component: () => import('layouts/MainLayout.vue'),
-    children: [{ path: '', component: () => import('pages/Index.vue') }],
-  },
-  {
-    path: '/login',
-    component: () => import('layouts/GenericLayout.vue'),
-    children: [{ path: '', component: () => import('pages/Login.vue') }],
-  },
-  {
-    path: '/register',
-    component: () => import('layouts/GenericLayout.vue'),
-    children: [{ path: '', component: () => import('pages/Register.vue') }],
+    children: [
+      {
+        path: '',
+        name: 'home',
+        component: () => import('pages/ChannelPage.vue'),
+      },
+    ],
   },
 
   // Always leave this as last one,

@@ -9,7 +9,7 @@ import cLogin from 'components/LoginComponent.vue';
 import { defineComponent } from 'vue';
 
 export default defineComponent({
-  name: 'Login',
+  name: 'LoginPage',
   components: { cLogin },
 });
 </script>

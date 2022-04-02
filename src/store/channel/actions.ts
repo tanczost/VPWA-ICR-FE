@@ -1,4 +1,4 @@
-import axios from 'axios';
+import { api } from 'src/boot/axios';
 import { Channel } from 'src/components/models';
 import { ActionTree } from 'vuex';
 import { StateInterface } from '../index';
@@ -17,17 +17,9 @@ const actions: ActionTree<ChannelStateInterface, StateInterface> = {
         private: channel.private,
       };
 
-      console.log(channel);
-      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      const token = `bearer ${this.state.userStore.token?.token}`;
-
-      const result = await axios.post(
-        'http://localhost:3333/channel/',
-        {
-          ...requestData,
-        },
-        { headers: { Authorization: token } }
-      );
+      const result = await api.post('http://localhost:3333/channel/', {
+        ...requestData,
+      });
 
       if (result.status === 200) {
         this.commit('channelStore/addChannel', { ...channel });

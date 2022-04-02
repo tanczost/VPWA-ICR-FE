@@ -6,14 +6,16 @@ export interface TokenState {
 }
 
 export interface UserStateInterface {
-  token: TokenState | null;
   user: User | null;
+  status: 'pending' | 'success' | 'error';
+  errors: { message: string; field?: string }[];
 }
 
 function state(): UserStateInterface {
   return {
-    token: null,
     user: null,
+    status: 'pending',
+    errors: [],
   };
 }
 

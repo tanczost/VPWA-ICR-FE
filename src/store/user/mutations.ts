@@ -1,14 +1,20 @@
 import { User } from 'src/components/models';
 import { MutationTree } from 'vuex';
-import { TokenState, UserStateInterface } from './state';
+import { UserStateInterface } from './state';
 
 const mutation: MutationTree<UserStateInterface> = {
-  saveUser(state: UserStateInterface, user: User) {
+  AUTH_START(state) {
+    state.status = 'pending';
+    state.errors = [];
+  },
+  AUTH_SUCCESS(state, user: User | null) {
+    state.status = 'success';
     state.user = user;
   },
-
-  saveToken(state: UserStateInterface, token: TokenState) {
-    state.token = token;
+  AUTH_ERROR(state, errors) {
+    state.status = 'error';
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    state.errors = errors;
   },
 };
 

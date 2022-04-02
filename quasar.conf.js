@@ -28,10 +28,12 @@ module.exports = configure(function (ctx) {
     // app boot file (/src/boot)
     // --> boot files are part of "main.js"
     // https://quasar.dev/quasar-cli/boot-files
-    boot: ['axios'],
+    boot: ['axios', 'auth'],
 
     // https://quasar.dev/quasar-cli/quasar-conf-js#Property%3A-css
     css: ['app.scss'],
+
+    sourceFiles: { store: 'src/store/index.ts' },
 
     // https://github.com/quasarframework/quasar/tree/dev/extras
     extras: [
@@ -49,7 +51,7 @@ module.exports = configure(function (ctx) {
 
     // Full list of options: https://quasar.dev/quasar-cli/quasar-conf-js#Property%3A-build
     build: {
-      vueRouterMode: 'hash', // available values: 'hash', 'history'
+      vueRouterMode: 'history', // available values: 'hash', 'history'
 
       // transpile: false,
       // publicPath: '/',
@@ -72,6 +74,11 @@ module.exports = configure(function (ctx) {
       // "chain" is a webpack-chain object https://github.com/neutrinojs/webpack-chain
       chainWebpack(/* chain */) {
         //
+      },
+      env: {
+        API_URL:
+          process.env.API_URL ||
+          (ctx.dev ? 'http://localhost:3333' : 'https://prod.api.com'),
       },
     },
 

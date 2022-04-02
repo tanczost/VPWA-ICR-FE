@@ -5,8 +5,8 @@ export interface DrawerStateInterface {
 
 function state(): DrawerStateInterface {
   return {
-    leftDrawerOpened: true,
-    rightDrawerOpened: true,
+    leftDrawerOpened: false,
+    rightDrawerOpened: false,
   };
 }
 

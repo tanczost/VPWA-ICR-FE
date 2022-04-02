@@ -7,9 +7,8 @@ const getters: GetterTree<UserStateInterface, StateInterface> = {
     return state.user?.nickName;
   },
 
-  getMyToken(state: UserStateInterface): string {
-    if (state.token) return `bearer ${state.token?.token}`;
-    else return '';
+  isAuthenticated(context) {
+    return context.user !== null;
   },
 };
 
