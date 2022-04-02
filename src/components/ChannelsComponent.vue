@@ -36,7 +36,7 @@ export default defineComponent({
   },
   methods: {
     openChannel(channelId: number) {
-      void this.$router.push(`/${channelId}`);
+      void this.$router.push(`/channels/${channelId}`);
     },
     setChannelName(channelName: number) {
       this.channelNameInvite;
