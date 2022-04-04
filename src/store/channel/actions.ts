@@ -59,7 +59,7 @@ const actions: ActionTree<ChannelStateInterface, StateInterface> = {
                   private: currentChannel.private,
                   name: currentChannel.name,
                   lastActivity: undefined,
-                  ownerName: 'Jozo',
+                  ownerUsername: currentChannel.ownerUsername,
                   users: channelUsersResult.data.users,
                   messages: [],
                 };

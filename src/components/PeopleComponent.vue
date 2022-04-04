@@ -19,7 +19,7 @@ export default defineComponent({
     getChannelAdmin() {
       return this.$store.state.channelStore.channels.find(
         (channel) => channel.id == +this.$route.params.groupId
-      )?.ownerName;
+      )?.ownerUsername;
     },
   },
 });

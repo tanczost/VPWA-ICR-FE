@@ -31,7 +31,7 @@ export interface Channel {
   private: boolean;
   name: string;
   lastActivity: string | undefined;
-  ownerName: string;
+  ownerUsername: string;
   users: ChannelUsers[];
   messages: Message[];
 }

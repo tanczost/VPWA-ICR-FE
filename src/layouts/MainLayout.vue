@@ -7,9 +7,5 @@ export default defineComponent({
 </script>
 
 <template>
-  <q-layout view="hHh LpR lFr">
-    <q-page-container>
-      <router-view />
-    </q-page-container>
-  </q-layout>
+  <q-layout view="hHh LpR lFr"> <router-view /> </q-layout>
 </template>
