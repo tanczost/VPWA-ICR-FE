@@ -43,6 +43,15 @@ export default defineComponent({
     ChangeStatus(index: number) {
       this.$store.commit('userStore/setUserStatus', index);
     },
+    async logout() {
+      try {
+        await this.$store.dispatch('userStore/logout');
+
+        this.$q.notify({ message: 'Logout successful', color: 'green' });
+      } catch (error) {
+        this.$q.notify({ message: 'Logout failed, try again! ', color: 'red' });
+      }
+    },
   },
   mounted() {
     console.log('fasz');
@@ -89,7 +98,7 @@ export default defineComponent({
                       @click="icon = true"
                     />
                   </div>
-                  <q-btn flat label="log out" color="red" href="#/login" />
+                  <q-btn flat label="log out" color="red" @click="logout" />
                 </div>
               </div>
             </q-btn-dropdown>
