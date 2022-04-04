@@ -36,6 +36,15 @@ export default defineComponent({
     getMyState(state: number): string {
       return UserState[state - 1];
     },
+    async logout() {
+      try {
+        await this.$store.dispatch('userStore/logout');
+
+        this.$q.notify({ message: 'Logout successful', color: 'green' });
+      } catch (error) {
+        this.$q.notify({ message: 'Logout failed, try again! ', color: 'red' });
+      }
+    },
   },
 });
 </script>
@@ -78,7 +87,7 @@ export default defineComponent({
                       @click="icon = true"
                     />
                   </div>
-                  <q-btn flat label="log out" color="red" href="#/login" />
+                  <q-btn flat label="log out" color="red" @click="logout" />
                 </div>
               </div>
             </q-btn-dropdown>
