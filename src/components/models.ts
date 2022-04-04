@@ -13,7 +13,6 @@ export interface User {
   firstName: string;
   email: string;
   status: number;
-  notify: boolean;
 }
 
 export interface Message {

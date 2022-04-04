@@ -16,6 +16,11 @@ const mutation: MutationTree<UserStateInterface> = {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     state.errors = errors;
   },
+  setUserStatus(state, newStatus: number) {
+    if (state.user) {
+      state.user.status = newStatus;
+    }
+  },
 };
 
 export default mutation;

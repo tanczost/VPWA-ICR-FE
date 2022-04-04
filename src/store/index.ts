@@ -7,9 +7,6 @@ import {
 } from 'vuex';
 import VuexPersistence from 'vuex-persist';
 
-import counter from './count';
-import { CountStateInterface } from './count/state';
-
 import drawerStore from './drawerStore';
 import { DrawerStateInterface } from './drawerStore/state';
 
@@ -32,7 +29,6 @@ export interface StateInterface {
   // Define your own store structure, using submodules if needed
   // example: ExampleStateInterface;
   // Declared as unknown to avoid linting issue. Best to strongly type as per the line above.
-  counter: CountStateInterface;
   userStore: UserStateInterface;
   channelStore: ChannelStateInterface;
   drawerStore: DrawerStateInterface;
@@ -56,7 +52,6 @@ const vuexLocal = new VuexPersistence<StateInterface>({
 export default store(function (/* { ssrContext } */) {
   const Store = createStore<StateInterface>({
     modules: {
-      counter,
       userStore,
       channelStore,
       drawerStore,

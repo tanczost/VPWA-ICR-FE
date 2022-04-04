@@ -5,16 +5,20 @@ import { UserState } from './models';
 
 interface State {
   icon: boolean;
+  status: string;
 }
 
 export default defineComponent({
   data(): State {
     return {
       icon: false,
+      status: 'Online',
     };
   },
   computed: {
-    ...mapGetters('userStore', { getUserInfo: 'getUserInfo' }),
+    ...mapGetters('userStore', {
+      getUserInfo: 'getUserInfo',
+    }),
     isLeftSideDrawerOpen: {
       get() {
         return this.$store.state.drawerStore.leftDrawerOpened;
@@ -36,6 +40,13 @@ export default defineComponent({
     getMyState(state: number): string {
       return UserState[state - 1];
     },
+    ChangeStatus(index: number) {
+      this.$store.commit('userStore/setUserStatus', index);
+    },
+  },
+  mounted() {
+    console.log('fasz');
+    this.$store.commit('userStore/setUserStatus', 1);
   },
 });
 </script>
@@ -103,6 +114,7 @@ export default defineComponent({
                   val="Online"
                   label="Online"
                   color="teal"
+                  @click="ChangeStatus(1)"
                 />
                 <q-radio
                   keep-color
@@ -110,6 +122,7 @@ export default defineComponent({
                   val="Do Not Disturb"
                   label="Do Not Disturb"
                   color="red"
+                  @click="ChangeStatus(2)"
                 />
                 <q-radio
                   keep-color
@@ -117,6 +130,7 @@ export default defineComponent({
                   val="Offline"
                   label="Offline"
                   color="gray"
+                  @click="ChangeStatus(3)"
                 />
               </div>
             </div>
