@@ -89,7 +89,7 @@ const actions: ActionTree<ChannelStateInterface, StateInterface> = {
 
   leave({ getters, commit }, channelId: number | null) {
     const leaving: number[] =
-      channelId !== null ? [channelId] : getters.joinedChannels;
+      channelId !== null ? [channelId] : getters.joinedChannelsIds;
 
     leaving.forEach((c) => {
       channelService.leave(c);

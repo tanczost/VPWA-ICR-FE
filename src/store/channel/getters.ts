@@ -12,6 +12,9 @@ const getters: GetterTree<ChannelStateInterface, StateInterface> = {
   joinedChannels(context) {
     return context.channels;
   },
+  joinedChannelsIds(context) {
+    return context.channels.map((channel) => channel.id);
+  },
   currentMessages(context) {
     const channel = context.channels.find(
       (channel) => channel.id === context.active

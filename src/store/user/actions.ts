@@ -7,15 +7,10 @@ import { User } from 'src/components/models';
 import { LoginData } from 'src/services/AuthService';
 
 const actions: ActionTree<UserStateInterface, StateInterface> = {
-  async check({ state, commit, dispatch }) {
+  async check({ commit }) {
     try {
       commit('AUTH_START');
       const user = await authService.me();
-      // join user to general channel - hardcoded for now
-      if (user?.id !== state.user?.id) {
-        await dispatch('channelStore/join', 1, { root: true });
-      }
-
       commit('AUTH_SUCCESS', user);
       return user !== null;
     } catch (err) {
