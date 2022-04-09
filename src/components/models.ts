@@ -8,6 +8,7 @@ export interface Meta {
 }
 
 export interface User {
+  id: number;
   nickName: string;
   lastName: string;
   firstName: string;
@@ -16,8 +17,12 @@ export interface User {
 }
 
 export interface Message {
-  text: string;
+  text: { text: string };
   mentions: null;
+  createdAt: string;
+  updatedAt: string;
+  id: number;
+  author: User;
 }
 
 export interface ChannelUsers {
@@ -40,3 +45,5 @@ export enum UserState {
   'Do Not Disturb',
   'Offline',
 }
+
+export type RawMessage = string;

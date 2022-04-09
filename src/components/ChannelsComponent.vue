@@ -1,6 +1,6 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { mapGetters } from 'vuex';
+import { mapGetters, mapMutations } from 'vuex';
 
 interface State {
   showNewChannelDialog: boolean;
@@ -35,8 +35,12 @@ export default defineComponent({
     },
   },
   methods: {
+    ...mapMutations('channelStore', {
+      setActiveChannel: 'SET_ACTIVE',
+    }),
     openChannel(channelId: number) {
       void this.$router.push(`/channels/${channelId}`);
+      this.setActiveChannel(channelId);
     },
     setChannelName(channelName: number) {
       this.channelNameInvite;

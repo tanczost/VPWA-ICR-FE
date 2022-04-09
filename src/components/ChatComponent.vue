@@ -1,33 +1,45 @@
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent, PropType } from 'vue';
+import { mapActions, mapGetters, mapMutations } from 'vuex';
+import { Message } from './models';
 
 interface State {
   icon: boolean;
-  message: string[];
-  sendMessage: string;
+  newMessage: string;
   typers: string[];
   showAllTypersDialog: boolean;
   currentTyper: string;
   currentText: string;
   showCurrentTypersDialog: boolean;
   showLeaveConfirmationDialog: boolean;
+  loading: boolean;
 }
 
 export default defineComponent({
   data(): State {
     return {
       icon: false,
-      message: [],
-      sendMessage: '',
-      typers: ['Laci', 'Palo', 'Tanczi', 'Lakatos Brandon'],
+      newMessage: '',
+      typers: [],
       showAllTypersDialog: false,
       currentTyper: '',
       currentText: '',
       showCurrentTypersDialog: false,
       showLeaveConfirmationDialog: false,
+      loading: false,
     };
   },
+  props: {
+    messages: {
+      type: Array as PropType<Message[]>,
+      default: () => [],
+    },
+  },
   computed: {
+    ...mapGetters('channelStore', {
+      channels: 'joinedChannels',
+      lastMessageOf: 'lastMessageOf',
+    }),
     getChannelByID() {
       return this.$store.state.channelStore.channels.find(
         (channel) => channel.id == +this.$route.params.groupId
@@ -35,18 +47,30 @@ export default defineComponent({
     },
   },
   methods: {
-    send() {
-      if (this.sendMessage != '') {
-        this.message.push(this.sendMessage);
-      }
-      this.sendMessage = '';
+    isMine(message: Message): boolean {
+      return message.author.id === this.$store.state.userStore.user?.id;
     },
-    openCurrentMessage(name: string) {
-      this.currentTyper = name;
-      this.currentText =
-        "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including";
-      this.showCurrentTypersDialog = true;
+    async send() {
+      console.log(this.messages);
+      this.loading = true;
+      await this.addMessage({
+        channelId: this.$store.state.channelStore.active,
+        message: this.newMessage,
+      });
+      this.newMessage = '';
+      this.loading = false;
     },
+    ...mapMutations('channelStore', {
+      setActiveChannel: 'SET_ACTIVE',
+    }),
+    ...mapActions('user', ['logout']),
+    ...mapActions('channelStore', ['addMessage']),
+  },
+  openCurrentMessage(name: string) {
+    this.currentTyper = name;
+    this.currentText =
+      "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including";
+    this.showCurrentTypersDialog = true;
   },
 });
 </script>
@@ -73,35 +97,24 @@ export default defineComponent({
           <i class="text-red"> New messages &nbsp;</i>
         </b>
         <q-separator color="red" />
-        <div v-for="text in message" :key="text">
-          <q-chat-message
-            v-if="!!message.length"
-            name="Lacinko"
-            :text="[text]"
-            text-color="white"
-            bg-color="secondary"
-          />
-        </div>
+        <q-chat-message
+          v-for="message in messages"
+          :key="message.id"
+          :name="message.author.nickName"
+          :text="[message.text.text]"
+          :stamp="message.createdAt"
+          :sent="isMine(message)"
+        />
       </div>
     </div>
     <q-footer class="bg-white row bottom-text">
       <section v-if="typers.length < 4">
-        <b
-          v-for:="name in typers"
-          :key="name"
-          class="name"
-          @click="openCurrentMessage(name)"
-        >
+        <b v-for:="name in typers" :key="name" class="name">
           {{ name }}&nbsp;
         </b>
       </section>
       <section v-else>
-        <b
-          v-for:="name in typers.slice(0, 3)"
-          :key="name"
-          class="name"
-          @click="openCurrentMessage(name)"
-        >
+        <b v-for:="name in typers.slice(0, 3)" :key="name" class="name">
           {{ name }}&nbsp;
         </b>
         <b class="name" @click="showAllTypersDialog = true"> and more&nbsp; </b>
@@ -124,7 +137,7 @@ export default defineComponent({
           dense
           class="WAL__field col-grow q-mr-sm"
           bg-color="white"
-          v-model="sendMessage"
+          v-model="newMessage"
           placeholder="Type a message"
           @keyup.enter="send"
         />

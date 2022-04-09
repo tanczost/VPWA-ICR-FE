@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { api } from 'src/boot/axios';
-import { Channel, ChannelUsers } from 'src/components/models';
+import { Channel, ChannelUsers, RawMessage } from 'src/components/models';
 import { channelService } from 'src/services';
 import { ActionTree } from 'vuex';
 import { StateInterface } from '../index';
@@ -41,8 +41,6 @@ const actions: ActionTree<ChannelStateInterface, StateInterface> = {
 
   async getChannels(): Promise<boolean> {
     try {
-      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-
       const allChannelsResult = await channelService.getChannels();
 
       const userChannelsResult = await Promise.all(
@@ -79,6 +77,33 @@ const actions: ActionTree<ChannelStateInterface, StateInterface> = {
     } catch (error) {
       console.error(error);
       return false;
+    }
+  },
+  async addMessage(
+    { commit },
+    { channelId, message }: { channelId: number; message: RawMessage }
+  ) {
+    const newMessage = await channelService.in(channelId)?.addMessage(message);
+    commit('NEW_MESSAGE', { channelId, message: newMessage });
+  },
+
+  leave({ getters, commit }, channelId: number | null) {
+    const leaving: number[] =
+      channelId !== null ? [channelId] : getters.joinedChannels;
+
+    leaving.forEach((c) => {
+      channelService.leave(c);
+      commit('CLEAR_CHANNEL', c);
+    });
+  },
+  async join({ commit }, channelId: number) {
+    try {
+      commit('LOADING_START');
+      const messages = await channelService.join(channelId).loadMessages();
+      commit('LOADING_SUCCESS', { channelId, messages });
+    } catch (err) {
+      commit('LOADING_ERROR', err);
+      throw err;
     }
   },
 };

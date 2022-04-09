@@ -7,13 +7,16 @@ import { User } from 'src/components/models';
 import { LoginData } from 'src/services/AuthService';
 
 const actions: ActionTree<UserStateInterface, StateInterface> = {
-  async check({ commit }) {
+  async check({ state, commit, dispatch }) {
     try {
       commit('AUTH_START');
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       const user = await authService.me();
+      // join user to general channel - hardcoded for now
+      if (user?.id !== state.user?.id) {
+        await dispatch('channelStore/join', 1, { root: true });
+      }
+
       commit('AUTH_SUCCESS', user);
-      console.log(user);
       return user !== null;
     } catch (err) {
       commit('AUTH_ERROR', err);
@@ -44,10 +47,11 @@ const actions: ActionTree<UserStateInterface, StateInterface> = {
       throw err;
     }
   },
-  async logout({ commit }) {
+  async logout({ commit, dispatch }) {
     try {
       commit('AUTH_START');
       await authService.logout();
+      await dispatch('channelStore/leave', null, { root: true });
       commit('AUTH_SUCCESS', null);
       // remove api token and notify listeners
       authManager.removeToken();
