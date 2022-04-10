@@ -59,7 +59,11 @@ export default defineComponent({
       return this.$router.push(this.redirectToHome);
     },
     async send() {
-      console.log(this.messages);
+      if (this.newMessage.startsWith('/')) {
+        await this.command();
+        return;
+      }
+
       this.loading = true;
       await this.addMessage({
         channelId: this.$store.state.channelStore.active,
@@ -67,6 +71,12 @@ export default defineComponent({
       });
       this.newMessage = '';
       this.loading = false;
+    },
+    async command() {
+      switch (true) {
+        case this.newMessage.startsWith('/cancel'):
+          await this.leaveChannel();
+      }
     },
     ...mapMutations('channelStore', {
       setActiveChannel: 'SET_ACTIVE',
