@@ -29,9 +29,9 @@ const actions: ActionTree<ChannelStateInterface, StateInterface> = {
         private: channel.private,
       };
 
-      await channelService.addChannel(requestData);
+      const { channelId } = await channelService.addChannel(requestData);
 
-      this.commit('channelStore/addChannel', { ...channel });
+      this.commit('channelStore/addChannel', { ...channel, id: channelId });
       return true;
     } catch (error) {
       console.error(error);
@@ -87,7 +87,11 @@ const actions: ActionTree<ChannelStateInterface, StateInterface> = {
     commit('NEW_MESSAGE', { channelId, message: newMessage });
   },
 
-  leave({ getters, commit }, channelId: number | null) {
+  async leave({ getters, commit }, channelId: number | null) {
+    if (channelId !== null) {
+      await channelService.in(channelId)?.leaveChannel();
+    }
+
     const leaving: number[] =
       channelId !== null ? [channelId] : getters.joinedChannelsIds;
 

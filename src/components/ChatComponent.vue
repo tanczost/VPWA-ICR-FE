@@ -1,5 +1,6 @@
 <script lang="ts">
 import { defineComponent, PropType } from 'vue';
+import { RouteLocationRaw } from 'vue-router';
 import { mapActions, mapGetters, mapMutations } from 'vuex';
 import { Message } from './models';
 
@@ -36,6 +37,9 @@ export default defineComponent({
     },
   },
   computed: {
+    redirectToHome(): RouteLocationRaw {
+      return (this.$route.query.redirect as string) || { name: 'home' };
+    },
     ...mapGetters('channelStore', {
       channels: 'joinedChannels',
       lastMessageOf: 'lastMessageOf',
@@ -49,6 +53,10 @@ export default defineComponent({
   methods: {
     isMine(message: Message): boolean {
       return message.author.id === this.$store.state.userStore.user?.id;
+    },
+    async leaveChannel() {
+      await this.leave(this.$store.state.channelStore.active);
+      return this.$router.push(this.redirectToHome);
     },
     async send() {
       console.log(this.messages);
@@ -64,7 +72,10 @@ export default defineComponent({
       setActiveChannel: 'SET_ACTIVE',
     }),
     ...mapActions('user', ['logout']),
-    ...mapActions('channelStore', ['addMessage']),
+    ...mapActions('channelStore', {
+      addMessage: 'addMessage',
+      leave: 'leave',
+    }),
   },
   openCurrentMessage(name: string) {
     this.currentTyper = name;
@@ -187,7 +198,7 @@ export default defineComponent({
 
       <q-card-actions align="right" class="text-primary">
         <q-btn flat label="Negative" v-close-popup color="red" />
-        <q-btn flat label="YES!" v-close-popup />
+        <q-btn flat label="YES!" @click="leaveChannel" v-close-popup />
       </q-card-actions>
     </q-card>
   </q-dialog>
