@@ -1,6 +1,14 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import { RouteLocationRaw } from 'vue-router';
+import useVuelidate from '@vuelidate/core';
+import {
+  minLength,
+  required,
+  helpers,
+  email,
+  sameAs,
+} from '@vuelidate/validators';
 
 interface State {
   count: number;
@@ -15,6 +23,11 @@ interface State {
 
 export default defineComponent({
   name: 'RegisterComponent',
+  setup() {
+    return {
+      v$: useVuelidate({ $autoDirty: true }),
+    };
+  },
   data(): State {
     return {
       count: 2,
@@ -36,7 +49,7 @@ export default defineComponent({
     },
   },
   methods: {
-    register() {
+    async register() {
       const data = {
         nickName: this.nickname,
         firstName: this.firstname,
@@ -45,11 +58,74 @@ export default defineComponent({
         email: this.email,
       };
 
+      const isFormCorrect = await this.v$.$validate();
+      if (!isFormCorrect) {
+        this.v$.$errors.forEach((e) => {
+          this.$q.notify({
+            color: 'red-4',
+            textColor: 'white',
+            icon: 'warning',
+            message: e.$message.toString(),
+          });
+        });
+
+        return;
+      }
+
       void this.$store.dispatch('userStore/register', data).then(() => {
         this.$q.notify({ message: 'Register successful', color: 'green' });
         return this.$router.push(this.redirectTo);
       });
     },
+  },
+  validations() {
+    return {
+      nickname: {
+        required: helpers.withMessage('Nickname is mandatory field.', required),
+        minLength: helpers.withMessage(
+          'Nickname should have at least 3 characters',
+          minLength(3)
+        ),
+      },
+      password: {
+        required: helpers.withMessage('Password is mandatory field.', required),
+        minLength: helpers.withMessage(
+          'Password should have at least 6 characters',
+          minLength(6)
+        ),
+      },
+      firstname: {
+        required: helpers.withMessage(
+          'Firstname is mandatory field.',
+          required
+        ),
+        minLength: helpers.withMessage(
+          'Firstname should have at least 3 characters',
+          minLength(3)
+        ),
+      },
+      lastname: {
+        required: helpers.withMessage('Lastname is mandatory field.', required),
+        minLength: helpers.withMessage(
+          'Lastname should have at least 3 characters',
+          minLength(3)
+        ),
+      },
+      email: {
+        required: helpers.withMessage('Email is mandatory field.', required),
+        email,
+      },
+      confirmPassword: {
+        required: helpers.withMessage(
+          'Confirm password is mandatory field.',
+          required
+        ),
+        sameAsPassword: helpers.withMessage(
+          'The passwords do not match.',
+          sameAs(this.password)
+        ),
+      },
+    };
   },
 });
 </script>
@@ -69,6 +145,7 @@ export default defineComponent({
           outlined
           v-model="lastname"
           label="Lastname"
+          required
         />
       </section>
 

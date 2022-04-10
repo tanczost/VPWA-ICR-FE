@@ -2,6 +2,8 @@
 import { LoginData } from 'src/services/AuthService';
 import { defineComponent } from 'vue';
 import { RouteLocationRaw } from 'vue-router';
+import useVuelidate from '@vuelidate/core';
+import { minLength, required, helpers } from '@vuelidate/validators';
 
 interface State {
   count: number;
@@ -11,6 +13,11 @@ interface State {
 
 export default defineComponent({
   name: 'LoginComponent',
+  setup() {
+    return {
+      v$: useVuelidate({ $autoDirty: true }),
+    };
+  },
   data(): State {
     return {
       count: 2,
@@ -27,11 +34,25 @@ export default defineComponent({
     },
   },
   methods: {
-    login() {
+    async login() {
       const data: LoginData = {
         nickName: this.nickName,
         password: this.password,
       };
+
+      const isFormCorrect = await this.v$.$validate();
+      if (!isFormCorrect) {
+        this.v$.$errors.forEach((e) => {
+          this.$q.notify({
+            color: 'red-4',
+            textColor: 'white',
+            icon: 'warning',
+            message: e.$message.toString(),
+          });
+        });
+
+        return;
+      }
 
       void this.$store
         .dispatch('userStore/login', data)
@@ -48,6 +69,24 @@ export default defineComponent({
           this.$q.notify({ message: 'Bad credentials', color: 'red' });
         });
     },
+  },
+  validations() {
+    return {
+      nickName: {
+        required: helpers.withMessage('Nickname is mandatory field.', required),
+        minLength: helpers.withMessage(
+          'Nickname should have at least 3 characters',
+          minLength(3)
+        ),
+      },
+      password: {
+        equired: helpers.withMessage('Password is mandatory field.', required),
+        minLength: helpers.withMessage(
+          'Password should have at least 6 characters',
+          minLength(6)
+        ),
+      },
+    };
   },
 });
 </script>
