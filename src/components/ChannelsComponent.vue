@@ -6,7 +6,7 @@ interface State {
   showNewChannelDialog: boolean;
   showInviteDialog: boolean;
   isNewChannelPrivate: boolean;
-  channelNameInvite: number;
+  channelNameInvite: string;
   newChannelName: string;
 }
 export default defineComponent({
@@ -15,12 +15,15 @@ export default defineComponent({
       showNewChannelDialog: false,
       showInviteDialog: false,
       isNewChannelPrivate: false,
-      channelNameInvite: 0,
+      channelNameInvite: '',
       newChannelName: '',
     };
   },
   computed: {
-    ...mapGetters('userStore', { getMyNickName: 'getMyNickName' }),
+    ...mapGetters('userStore', {
+      getMyNickName: 'getMyNickName',
+      getInvites: 'getInvites',
+    }),
     ...mapGetters('channelStore', {
       getPrivateChannels: 'getPrivateChannels',
       getPublicChannels: 'getPublicChannels',
@@ -35,6 +38,11 @@ export default defineComponent({
     },
   },
   methods: {
+    acceptInvite(inviteId: number, channelName: string) {
+      this.showInviteDialog = true;
+      this.channelNameInvite = `Do you want to accept invite into  channel ${channelName}?`;
+      console.log(inviteId);
+    },
     ...mapMutations('channelStore', {
       setActiveChannel: 'SET_ACTIVE',
     }),
@@ -44,7 +52,7 @@ export default defineComponent({
       this.setActiveChannel(channelId);
       await this.joinChannel(channelId);
     },
-    setChannelName(channelName: number) {
+    setChannelName(channelName: string) {
       this.channelNameInvite;
       this.channelNameInvite = channelName;
       this.showInviteDialog = true;
@@ -113,9 +121,12 @@ export default defineComponent({
 
         <q-expansion-item expand-separator icon="group_add" label="Invitations">
           <q-list dense bordered padding>
-            <div v-for="channelName in 3" :key="channelName">
-              <q-item clickable v-ripple @click="setChannelName(channelName)">
-                <q-item-section>{{ channelName }} Invite </q-item-section>
+            <div v-for="invite in getInvites" :key="invite.id">
+              <q-item clickable v-ripple @click="acceptInvite(invite.id)">
+                <q-item-section
+                  >User {{ invite.invitedByNickName }} invited you in channel
+                  {{ invite.channelName }}
+                </q-item-section>
               </q-item>
             </div>
           </q-list>
@@ -162,7 +173,7 @@ export default defineComponent({
   <q-dialog v-model="showInviteDialog" persistent>
     <q-card style="min-width: 40%">
       <q-card-section>
-        <div class="text-h6">New channel invite: {{ channelNameInvite }}</div>
+        <div class="text-h6">{{ channelNameInvite }}</div>
       </q-card-section>
 
       <q-card-actions align="right" class="text-primary">
