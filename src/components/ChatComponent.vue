@@ -14,6 +14,7 @@ interface State {
   showCurrentTypersDialog: boolean;
   showLeaveConfirmationDialog: boolean;
   loading: boolean;
+  showAllPeopleInChat: boolean;
 }
 
 export default defineComponent({
@@ -28,6 +29,7 @@ export default defineComponent({
       showCurrentTypersDialog: false,
       showLeaveConfirmationDialog: false,
       loading: false,
+      showAllPeopleInChat: false,
     };
   },
   props: {
@@ -48,6 +50,11 @@ export default defineComponent({
       return this.$store.state.channelStore.channels.find(
         (channel) => channel.id == +this.$route.params.groupId
       );
+    },
+    getChannelUsers() {
+      return this.$store.state.channelStore.channels.find(
+        (channel) => channel.id == +this.$route.params.groupId
+      )?.users;
     },
   },
   methods: {
@@ -76,9 +83,14 @@ export default defineComponent({
       switch (true) {
         case this.newMessage.startsWith('/cancel'):
           await this.leaveChannel();
+          break;
         case this.newMessage.startsWith('/invite'):
           const nick = this.newMessage.split(' ');
           await this.addMember(nick[1]);
+          break;
+        case this.newMessage.startsWith('/list'):
+          this.showAllPeopleInChat = true;
+          break;
       }
       this.newMessage = '';
     },
@@ -115,46 +127,49 @@ export default defineComponent({
         />
       </div>
     </section>
-    <q-separator />
-    <div class="q-pa-md row justify-center">
-      <div style="width: 90%">
-        <q-chat-message name="me" :text="['hey, how are you?']" sent />
-        <b>
-          <i class="text-red"> New messages &nbsp;</i>
-        </b>
-        <q-separator color="red" />
-        <q-chat-message
-          v-for="message in messages"
-          :key="message.id"
-          :name="message.author.nickName"
-          :text="[message.text.text]"
-          :stamp="message.createdAt"
-          :sent="isMine(message)"
-        />
+    <q-infinite-scroll @load="onLoad" reverse>
+      <q-separator />
+      <div class="q-pa-md row justify-center">
+        <div style="width: 90%">
+          <b>
+            <i class="text-red"> New messages &nbsp;</i>
+          </b>
+          <q-separator color="red" />
+          <q-chat-message
+            v-for="message in messages"
+            :key="message.id"
+            :name="message.author.nickName"
+            :text="[message.text.text]"
+            :stamp="message.createdAt"
+            :sent="isMine(message)"
+          />
+        </div>
       </div>
-    </div>
-    <q-footer class="bg-white row bottom-text">
-      <section v-if="typers.length < 4">
-        <b v-for:="name in typers" :key="name" class="name">
-          {{ name }}&nbsp;
-        </b>
-      </section>
-      <section v-else>
-        <b v-for:="name in typers.slice(0, 3)" :key="name" class="name">
-          {{ name }}&nbsp;
-        </b>
-        <b class="name" @click="showAllTypersDialog = true"> and more&nbsp; </b>
-      </section>
-      <p
-        v-if="typers.length == 1"
-        class="text-black"
-        style="margin-bottom: 0px"
-      >
-        is&nbsp;
-      </p>
-      <p v-else class="text-black" style="margin-bottom: 0px">are&nbsp;</p>
-      <p class="text-black" style="margin-bottom: 0px">typing...&nbsp;</p>
-    </q-footer>
+      <q-footer class="bg-white row bottom-text">
+        <section v-if="typers.length < 4">
+          <b v-for:="name in typers" :key="name" class="name">
+            {{ name }}&nbsp;
+          </b>
+        </section>
+        <section v-else>
+          <b v-for:="name in typers.slice(0, 3)" :key="name" class="name">
+            {{ name }}&nbsp;
+          </b>
+          <b class="name" @click="showAllTypersDialog = true">
+            and more&nbsp;
+          </b>
+        </section>
+        <p
+          v-if="typers.length == 1"
+          class="text-black"
+          style="margin-bottom: 0px"
+        >
+          is&nbsp;
+        </p>
+        <p v-else class="text-black" style="margin-bottom: 0px">are&nbsp;</p>
+        <p class="text-black" style="margin-bottom: 0px">typing...&nbsp;</p>
+      </q-footer>
+    </q-infinite-scroll>
     <q-footer>
       <q-toolbar class="bg-grey-3 text-black row">
         <q-input
@@ -215,6 +230,22 @@ export default defineComponent({
         <q-btn flat label="Negative" v-close-popup color="red" />
         <q-btn flat label="YES!" @click="leaveChannel" v-close-popup />
       </q-card-actions>
+    </q-card>
+  </q-dialog>
+
+  <q-dialog v-model="showAllPeopleInChat">
+    <q-card style="min-width: 40%">
+      <q-card-section class="row items-center q-pb-none">
+        <div class="text-h6">People in this conversation</div>
+        <q-space />
+        <q-btn icon="close" flat round dense v-close-popup />
+      </q-card-section>
+      <q-separator />
+      <q-card-section>
+        <ul v-for="user in getChannelUsers" :key="user.username">
+          <li>{{ user.username }}</li>
+        </ul>
+      </q-card-section>
     </q-card>
   </q-dialog>
 </template>
