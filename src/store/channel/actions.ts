@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { api } from 'src/boot/axios';
 import { Channel, ChannelUsers, RawMessage } from 'src/components/models';
-import { channelService } from 'src/services';
+import { channelService, notificationService } from 'src/services';
 import { ActionTree } from 'vuex';
 import { StateInterface } from '../index';
 import { ChannelStateInterface } from './state';
@@ -100,6 +100,7 @@ const actions: ActionTree<ChannelStateInterface, StateInterface> = {
       commit('CLEAR_CHANNEL', c);
     });
   },
+
   async join({ commit }, channelId: number) {
     try {
       commit('LOADING_START');
@@ -109,6 +110,16 @@ const actions: ActionTree<ChannelStateInterface, StateInterface> = {
       commit('LOADING_ERROR', err);
       throw err;
     }
+  },
+
+  async addMember({ commit, state }, userNick: string) {
+    const channelId = state.active;
+    if (!channelId) {
+      return;
+    }
+    await notificationService
+      .getNotificationSocket()
+      ?.addMember(channelId, userNick);
   },
 };
 

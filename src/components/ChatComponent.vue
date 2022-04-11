@@ -76,6 +76,9 @@ export default defineComponent({
       switch (true) {
         case this.newMessage.startsWith('/cancel'):
           await this.leaveChannel();
+        case this.newMessage.startsWith('/invite'):
+          const nick = this.newMessage.split(' ');
+          await this.addMember(nick[1]);
       }
     },
     ...mapMutations('channelStore', {
@@ -85,6 +88,7 @@ export default defineComponent({
     ...mapActions('channelStore', {
       addMessage: 'addMessage',
       leave: 'leave',
+      addMember: 'addMember',
     }),
   },
   openCurrentMessage(name: string) {
