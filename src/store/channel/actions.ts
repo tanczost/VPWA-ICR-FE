@@ -121,6 +121,31 @@ const actions: ActionTree<ChannelStateInterface, StateInterface> = {
       .getNotificationSocket()
       ?.addMember(channelId, userNick);
   },
+
+  async acceptInvite({}, inviteId: number) {
+    try {
+      const channel = await channelService.acceptInvite(inviteId);
+      if (!channel.id) return;
+      const channelUsersResult = await api.get<ChannelUser>(
+        `/channel/${channel.id}/users`
+      );
+
+      channel.users = channelUsersResult.data.users;
+      this.commit('channelStore/addChannel', channel);
+      this.commit('userStore/removeInvite', inviteId);
+    } catch (err) {
+      console.error(err);
+    }
+  },
+  async declineInvite({}, inviteId: number) {
+    try {
+      await channelService.declineInvite(inviteId);
+
+      this.commit('userStore/removeInvite', inviteId);
+    } catch (err) {
+      console.error(err);
+    }
+  },
 };
 
 export default actions;

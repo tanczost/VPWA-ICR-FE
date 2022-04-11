@@ -8,6 +8,7 @@ interface State {
   isNewChannelPrivate: boolean;
   channelNameInvite: string;
   newChannelName: string;
+  inviteId: number;
 }
 export default defineComponent({
   data(): State {
@@ -17,6 +18,7 @@ export default defineComponent({
       isNewChannelPrivate: false,
       channelNameInvite: '',
       newChannelName: '',
+      inviteId: -1,
     };
   },
   computed: {
@@ -38,15 +40,27 @@ export default defineComponent({
     },
   },
   methods: {
-    acceptInvite(inviteId: number, channelName: string) {
+    openAcceptInvite(inviteId: number, channelName: string) {
       this.showInviteDialog = true;
+      this.inviteId = inviteId;
       this.channelNameInvite = `Do you want to accept invite into  channel ${channelName}?`;
-      console.log(inviteId);
+    },
+    async acceptInvite() {
+      await this.acceptInviteAction(this.inviteId);
+      this.showInviteDialog = false;
+    },
+    async declineInvite() {
+      await this.declineInviteAction(this.inviteId);
+      this.showInviteDialog = false;
     },
     ...mapMutations('channelStore', {
       setActiveChannel: 'SET_ACTIVE',
     }),
-    ...mapActions('channelStore', { joinChannel: 'join' }),
+    ...mapActions('channelStore', {
+      joinChannel: 'join',
+      acceptInviteAction: 'acceptInvite',
+      declineInviteAction: 'declineInvite',
+    }),
     async openChannel(channelId: number) {
       void this.$router.push(`/channels/${channelId}`);
       this.setActiveChannel(channelId);
@@ -122,7 +136,11 @@ export default defineComponent({
         <q-expansion-item expand-separator icon="group_add" label="Invitations">
           <q-list dense bordered padding>
             <div v-for="invite in getInvites" :key="invite.id">
-              <q-item clickable v-ripple @click="acceptInvite(invite.id)">
+              <q-item
+                clickable
+                v-ripple
+                @click="openAcceptInvite(invite.id, invite.channelName)"
+              >
                 <q-item-section
                   >User {{ invite.invitedByNickName }} invited you in channel
                   {{ invite.channelName }}
@@ -177,8 +195,14 @@ export default defineComponent({
       </q-card-section>
 
       <q-card-actions align="right" class="text-primary">
-        <q-btn flat label="Decline" v-close-popup color="red" />
-        <q-btn flat label="Accept" v-close-popup />
+        <q-btn
+          flat
+          label="Decline"
+          @click="declineInvite()"
+          v-close-popup
+          color="red"
+        />
+        <q-btn flat label="Accept" @click="acceptInvite()" v-close-popup />
       </q-card-actions>
     </q-card>
   </q-dialog>

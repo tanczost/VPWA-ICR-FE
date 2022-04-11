@@ -24,6 +24,13 @@ const mutation: MutationTree<UserStateInterface> = {
   addInvitation(state, invitation: Invitation) {
     state.user?.invitations.push(invitation);
   },
+  removeInvite(state, inviteId: number) {
+    if (!state.user) return;
+
+    state.user.invitations = state.user?.invitations.filter(
+      (invite) => invite.id !== inviteId
+    );
+  },
 };
 
 export default mutation;

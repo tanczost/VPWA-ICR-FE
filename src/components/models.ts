@@ -53,4 +53,5 @@ export interface Invitation {
   channelName: string;
   invitedByNickName: string;
   id: number;
+  channelId: number;
 }

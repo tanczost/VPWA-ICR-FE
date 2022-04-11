@@ -1,5 +1,5 @@
 import { api } from 'src/boot/axios';
-import { Message } from 'src/components/models';
+import { Channel, Message } from 'src/components/models';
 import { ChannelResponse, NewChannelState } from 'src/store/channel/actions';
 import { BootParams, SocketManager } from './SocketManager';
 
@@ -76,6 +76,16 @@ class ChannelService {
     });
 
     return result.data;
+  }
+
+  async acceptInvite(inviteId: number): Promise<Channel> {
+    const result = await api.get<Channel>(`/invitations/${inviteId}/accept/`);
+
+    return result.data;
+  }
+
+  async declineInvite(inviteId: number): Promise<void> {
+    await api.get<Channel>(`/invitations/${inviteId}/decline/`);
   }
 }
 
