@@ -14,6 +14,7 @@ export interface User {
   firstName: string;
   email: string;
   status: number;
+  invitations: Invitation[];
 }
 
 export interface Message {
@@ -47,3 +48,9 @@ export enum UserState {
 }
 
 export type RawMessage = string;
+
+export interface Invitation {
+  channelName: string;
+  invitedByNickName: string;
+  id: number;
+}

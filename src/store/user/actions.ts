@@ -2,15 +2,18 @@
 import { ActionTree } from 'vuex';
 import { StateInterface } from '../index';
 import { UserStateInterface } from './state';
-import { authService, authManager } from 'src/services';
+import { authService, authManager, notificationService } from 'src/services';
 import { User } from 'src/components/models';
 import { LoginData } from 'src/services/AuthService';
 
 const actions: ActionTree<UserStateInterface, StateInterface> = {
-  async check({ commit }) {
+  async check({ commit, state }) {
     try {
       commit('AUTH_START');
       const user = await authService.me();
+      if (user?.id !== state.user?.id) {
+        notificationService.join();
+      }
       commit('AUTH_SUCCESS', user);
       return user !== null;
     } catch (err) {
@@ -47,6 +50,7 @@ const actions: ActionTree<UserStateInterface, StateInterface> = {
       commit('AUTH_START');
       await authService.logout();
       await dispatch('channelStore/leave', null, { root: true });
+      notificationService.leave();
       commit('AUTH_SUCCESS', null);
       // remove api token and notify listeners
       authManager.removeToken();

@@ -6,6 +6,10 @@ import { BootParams, SocketManager } from './SocketManager';
 // creating instance of this class automatically connects to given socket.io namespace
 // subscribe is called with boot params, so you can use it to dispatch actions for socket events
 // you have access to socket.io socket using this.socket
+interface NewChannelResponse {
+  channelId: number;
+}
+
 class ChannelSocketManager extends SocketManager {
   public subscribe({ store }: BootParams): void {
     const channelId = this.namespace.split('/').pop() as string;
@@ -22,6 +26,10 @@ class ChannelSocketManager extends SocketManager {
 
   public loadMessages(): Promise<Message[]> {
     return this.emitAsync('loadMessages');
+  }
+
+  public leaveChannel(): Promise<void> {
+    return this.emitAsync('leave');
   }
 }
 
@@ -62,11 +70,12 @@ class ChannelService {
     return result.data;
   }
 
-  async addChannel(requestData: NewChannelState): Promise<void> {
-    await api.post('/channel/', {
+  async addChannel(requestData: NewChannelState): Promise<NewChannelResponse> {
+    const result = await api.post<NewChannelResponse>('/channel/', {
       ...requestData,
     });
-    // add join channel
+
+    return result.data;
   }
 }
 

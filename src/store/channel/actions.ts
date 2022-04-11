@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { api } from 'src/boot/axios';
 import { Channel, ChannelUsers, RawMessage } from 'src/components/models';
-import { channelService } from 'src/services';
+import { channelService, notificationService } from 'src/services';
 import { ActionTree } from 'vuex';
 import { StateInterface } from '../index';
 import { ChannelStateInterface } from './state';
@@ -29,9 +29,9 @@ const actions: ActionTree<ChannelStateInterface, StateInterface> = {
         private: channel.private,
       };
 
-      await channelService.addChannel(requestData);
+      const { channelId } = await channelService.addChannel(requestData);
 
-      this.commit('channelStore/addChannel', { ...channel });
+      this.commit('channelStore/addChannel', { ...channel, id: channelId });
       return true;
     } catch (error) {
       console.error(error);
@@ -87,7 +87,11 @@ const actions: ActionTree<ChannelStateInterface, StateInterface> = {
     commit('NEW_MESSAGE', { channelId, message: newMessage });
   },
 
-  leave({ getters, commit }, channelId: number | null) {
+  async leave({ getters, commit }, channelId: number | null) {
+    if (channelId !== null) {
+      await channelService.in(channelId)?.leaveChannel();
+    }
+
     const leaving: number[] =
       channelId !== null ? [channelId] : getters.joinedChannelsIds;
 
@@ -96,6 +100,7 @@ const actions: ActionTree<ChannelStateInterface, StateInterface> = {
       commit('CLEAR_CHANNEL', c);
     });
   },
+
   async join({ commit }, channelId: number) {
     try {
       commit('LOADING_START');
@@ -105,6 +110,16 @@ const actions: ActionTree<ChannelStateInterface, StateInterface> = {
       commit('LOADING_ERROR', err);
       throw err;
     }
+  },
+
+  async addMember({ commit, state }, userNick: string) {
+    const channelId = state.active;
+    if (!channelId) {
+      return;
+    }
+    await notificationService
+      .getNotificationSocket()
+      ?.addMember(channelId, userNick);
   },
 };
 
