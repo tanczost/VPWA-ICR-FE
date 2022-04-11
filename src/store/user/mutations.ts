@@ -1,4 +1,4 @@
-import { User } from 'src/components/models';
+import { Invitation, User } from 'src/components/models';
 import { MutationTree } from 'vuex';
 import { UserStateInterface } from './state';
 
@@ -20,6 +20,9 @@ const mutation: MutationTree<UserStateInterface> = {
     if (state.user) {
       state.user.status = newStatus;
     }
+  },
+  addInvitation(state, invitation: Invitation) {
+    state.user?.invitations.push(invitation);
   },
 };
 

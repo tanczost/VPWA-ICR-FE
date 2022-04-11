@@ -112,7 +112,7 @@ const actions: ActionTree<ChannelStateInterface, StateInterface> = {
     }
   },
 
-  async addMember({ commit, state }, userNick: string) {
+  async addMember({ state }, userNick: string) {
     const channelId = state.active;
     if (!channelId) {
       return;

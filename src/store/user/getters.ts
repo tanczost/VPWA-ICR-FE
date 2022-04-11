@@ -14,6 +14,10 @@ const getters: GetterTree<UserStateInterface, StateInterface> = {
   getUserInfo(state: UserStateInterface) {
     return state.user;
   },
+
+  getInvites(state: UserStateInterface) {
+    return state.user?.invitations;
+  },
 };
 
 export default getters;

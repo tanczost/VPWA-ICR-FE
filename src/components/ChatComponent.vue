@@ -80,6 +80,7 @@ export default defineComponent({
           const nick = this.newMessage.split(' ');
           await this.addMember(nick[1]);
       }
+      this.newMessage = '';
     },
     ...mapMutations('channelStore', {
       setActiveChannel: 'SET_ACTIVE',
