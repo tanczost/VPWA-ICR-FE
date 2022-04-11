@@ -89,46 +89,49 @@ export default defineComponent({
         />
       </div>
     </section>
-    <q-separator />
-    <div class="q-pa-md row justify-center">
-      <div style="width: 90%">
-        <q-chat-message name="me" :text="['hey, how are you?']" sent />
-        <b>
-          <i class="text-red"> New messages &nbsp;</i>
-        </b>
-        <q-separator color="red" />
-        <q-chat-message
-          v-for="message in messages"
-          :key="message.id"
-          :name="message.author.nickName"
-          :text="[message.text.text]"
-          :stamp="message.createdAt"
-          :sent="isMine(message)"
-        />
+    <q-infinite-scroll @load="onLoad" reverse>
+      <q-separator />
+      <div class="q-pa-md row justify-center">
+        <div style="width: 90%">
+          <b>
+            <i class="text-red"> New messages &nbsp;</i>
+          </b>
+          <q-separator color="red" />
+          <q-chat-message
+            v-for="message in messages"
+            :key="message.id"
+            :name="message.author.nickName"
+            :text="[message.text.text]"
+            :stamp="message.createdAt"
+            :sent="isMine(message)"
+          />
+        </div>
       </div>
-    </div>
-    <q-footer class="bg-white row bottom-text">
-      <section v-if="typers.length < 4">
-        <b v-for:="name in typers" :key="name" class="name">
-          {{ name }}&nbsp;
-        </b>
-      </section>
-      <section v-else>
-        <b v-for:="name in typers.slice(0, 3)" :key="name" class="name">
-          {{ name }}&nbsp;
-        </b>
-        <b class="name" @click="showAllTypersDialog = true"> and more&nbsp; </b>
-      </section>
-      <p
-        v-if="typers.length == 1"
-        class="text-black"
-        style="margin-bottom: 0px"
-      >
-        is&nbsp;
-      </p>
-      <p v-else class="text-black" style="margin-bottom: 0px">are&nbsp;</p>
-      <p class="text-black" style="margin-bottom: 0px">typing...&nbsp;</p>
-    </q-footer>
+      <q-footer class="bg-white row bottom-text">
+        <section v-if="typers.length < 4">
+          <b v-for:="name in typers" :key="name" class="name">
+            {{ name }}&nbsp;
+          </b>
+        </section>
+        <section v-else>
+          <b v-for:="name in typers.slice(0, 3)" :key="name" class="name">
+            {{ name }}&nbsp;
+          </b>
+          <b class="name" @click="showAllTypersDialog = true">
+            and more&nbsp;
+          </b>
+        </section>
+        <p
+          v-if="typers.length == 1"
+          class="text-black"
+          style="margin-bottom: 0px"
+        >
+          is&nbsp;
+        </p>
+        <p v-else class="text-black" style="margin-bottom: 0px">are&nbsp;</p>
+        <p class="text-black" style="margin-bottom: 0px">typing...&nbsp;</p>
+      </q-footer>
+    </q-infinite-scroll>
     <q-footer>
       <q-toolbar class="bg-grey-3 text-black row">
         <q-input
