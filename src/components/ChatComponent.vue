@@ -83,11 +83,14 @@ export default defineComponent({
       switch (true) {
         case this.newMessage.startsWith('/cancel'):
           await this.leaveChannel();
+          break;
         case this.newMessage.startsWith('/invite'):
           const nick = this.newMessage.split(' ');
           await this.addMember(nick[1]);
+          break;
         case this.newMessage.startsWith('/list'):
           this.showAllPeopleInChat = true;
+          break;
       }
       this.newMessage = '';
     },

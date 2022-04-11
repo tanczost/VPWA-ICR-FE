@@ -122,7 +122,11 @@ export default defineComponent({
         <q-expansion-item expand-separator icon="group_add" label="Invitations">
           <q-list dense bordered padding>
             <div v-for="invite in getInvites" :key="invite.id">
-              <q-item clickable v-ripple @click="acceptInvite(invite.id)">
+              <q-item
+                clickable
+                v-ripple
+                @click="acceptInvite(invite.id, invite.channelName)"
+              >
                 <q-item-section
                   >User {{ invite.invitedByNickName }} invited you in channel
                   {{ invite.channelName }}
