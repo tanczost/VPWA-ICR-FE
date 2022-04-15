@@ -46,6 +46,9 @@ export default defineComponent({
       channels: 'joinedChannels',
       lastMessageOf: 'lastMessageOf',
     }),
+    ...mapGetters('userStore', {
+      getMyNickName: 'getMyNickName',
+    }),
     getChannelByID() {
       return this.$store.state.channelStore.channels.find(
         (channel) => channel.id == +this.$route.params.groupId
@@ -82,15 +85,35 @@ export default defineComponent({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     async onLoad(index: any, done: any) {
       const activeId = this.$store.state.channelStore.active;
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       const page = this.$store.state.channelStore.channels.find(
         (channel) => channel.id === activeId
       )?.page;
       await this.loadMessages({
         channelId: activeId,
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         pageNumber: page,
       });
       // eslint-disable-next-line @typescript-eslint/no-unsafe-call
       done();
+    },
+    async createChannel(newChannelName: string, isNewChannelPrivate: boolean) {
+      const result = (await this.$store.dispatch('channelStore/addChannel', {
+        name: newChannelName,
+        private: isNewChannelPrivate,
+        ownerUserName: this.getMyNickName as string,
+        users: [],
+        messages: [],
+      })) as boolean;
+
+      if (result) {
+        this.$q.notify({
+          message: 'Channel  successfully created',
+          color: 'green',
+        });
+      } else {
+        this.$q.notify({ message: 'Channel can not be created', color: 'red' });
+      }
     },
     async command() {
       switch (true) {
@@ -103,6 +126,16 @@ export default defineComponent({
           break;
         case this.newMessage.startsWith('/list'):
           this.showAllPeopleInChat = true;
+          break;
+        case this.newMessage.startsWith('/join'):
+          const chatData = this.newMessage.split(' ');
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+          await this.createChannel(
+            chatData[1],
+            chatData[2] === '[private]' ? true : false
+          );
+          console.log(chatData[1]);
+          console.log(chatData[2] === '[private]' ? true : false);
           break;
       }
       this.newMessage = '';
@@ -129,7 +162,17 @@ export default defineComponent({
 
 <template>
   <q-page-container>
-    <section class="row">
+    <section
+      class="row"
+      style="
+        position: fixed;
+        top: 68px;
+        width: 80%;
+        z-index: 1;
+        background-color: white;
+        box-shadow: 3px 3px 5px 6px #ccc;
+      "
+    >
       <div class="text-h3 q-ma-sm chat-title">
         {{ getChannelByID?.name }}
       </div>
@@ -141,8 +184,11 @@ export default defineComponent({
         />
       </div>
     </section>
-    <q-infinite-scroll @load="onLoad" reverse>
-      <q-separator />
+    <q-infinite-scroll
+      @load="onLoad"
+      reverse
+      style="position: relative; top: 70px"
+    >
       <div class="q-pa-md row justify-center">
         <div style="width: 90%">
           <q-chat-message
