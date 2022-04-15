@@ -61,6 +61,11 @@ export default defineComponent({
     },
   },
   methods: {
+    isMention(mentions: string[]): boolean {
+      return mentions.includes(
+        this.$store.state.userStore.user?.nickName ?? ''
+      );
+    },
     isMine(message: Message): boolean {
       return message.author.id === this.$store.state.userStore.user?.id;
     },
@@ -195,9 +200,10 @@ export default defineComponent({
             v-for="message in messages"
             :key="message.id"
             :name="message.author.nickName"
-            :text="[message.text.text]"
+            :text="[message.content.text]"
             :stamp="message.createdAt"
             :sent="isMine(message)"
+            :class="{ msg: true, mention: isMention(message.content.mentions) }"
           />
         </div>
       </div>
@@ -359,5 +365,13 @@ export default defineComponent({
   .chat-dialog {
     width: 80%;
   }
+}
+
+.msg {
+  padding: 10px;
+}
+
+.mention {
+  background-color: aliceblue;
 }
 </style>

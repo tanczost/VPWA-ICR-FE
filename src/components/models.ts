@@ -18,8 +18,7 @@ export interface User {
 }
 
 export interface Message {
-  text: { text: string };
-  mentions: null;
+  content: { text: string; mentions: string[] };
   createdAt: string;
   updatedAt: string;
   id: number;
