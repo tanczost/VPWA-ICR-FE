@@ -39,6 +39,7 @@ export interface Channel {
   ownerUsername: string;
   users: ChannelUsers[];
   messages: Message[];
+  page: number;
 }
 
 export enum UserState {

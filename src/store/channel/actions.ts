@@ -60,6 +60,7 @@ const actions: ActionTree<ChannelStateInterface, StateInterface> = {
                   ownerUsername: currentChannel.ownerUsername,
                   users: channelUsersResult.data.users,
                   messages: [],
+                  page: 2,
                 };
                 return channel;
               }
@@ -84,7 +85,7 @@ const actions: ActionTree<ChannelStateInterface, StateInterface> = {
     { channelId, message }: { channelId: number; message: RawMessage }
   ) {
     const newMessage = await channelService.in(channelId)?.addMessage(message);
-    commit('NEW_MESSAGE', { channelId, message: newMessage });
+    commit('NEW_MESSAGE', { channelId, message: newMessage, type: 'push' });
   },
 
   async leave({ getters, commit }, channelId: number | null) {
@@ -105,7 +106,25 @@ const actions: ActionTree<ChannelStateInterface, StateInterface> = {
     try {
       commit('LOADING_START');
       const messages = await channelService.join(channelId).loadMessages();
+      commit('LOADING_SUCCESS', { channelId, messages, type: 'shift' });
+    } catch (err) {
+      commit('LOADING_ERROR', err);
+      throw err;
+    }
+  },
+
+  async loadMessages(
+    { commit },
+    { channelId, pageNumber }: { channelId: number; pageNumber: number }
+  ) {
+    try {
+      commit('LOADING_START');
+      const messages = await channelService
+        .in(channelId)
+        ?.loadMessages(pageNumber);
+
       commit('LOADING_SUCCESS', { channelId, messages });
+      commit('incrementPage', channelId);
     } catch (err) {
       commit('LOADING_ERROR', err);
       throw err;

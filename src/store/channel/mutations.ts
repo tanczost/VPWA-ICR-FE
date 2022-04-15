@@ -28,7 +28,7 @@ const mutation: MutationTree<ChannelStateInterface> = {
     state.loading = false;
     const channel = state.channels.find((c) => c.id === channelId);
     if (channel) {
-      channel.messages.push(...messages);
+      channel.messages.unshift(...messages);
     }
   },
   LOADING_ERROR(state: ChannelStateInterface, error) {
@@ -46,6 +46,12 @@ const mutation: MutationTree<ChannelStateInterface> = {
     const channel = state.channels.find((c) => c.id == channelId);
     if (channel) {
       channel.messages.push(message);
+    }
+  },
+  incrementPage(state: ChannelStateInterface, channelId: number) {
+    const channel = state.channels.find((c) => c.id == channelId);
+    if (channel) {
+      channel.page++;
     }
   },
 };

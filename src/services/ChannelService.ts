@@ -24,8 +24,9 @@ class ChannelSocketManager extends SocketManager {
     return this.emitAsync('addMessage', message);
   }
 
-  public loadMessages(): Promise<Message[]> {
-    return this.emitAsync('loadMessages');
+  public loadMessages(pageNumber?: number): Promise<Message[]> {
+    const page = pageNumber ?? 1;
+    return this.emitAsync('loadMessages', page);
   }
 
   public leaveChannel(): Promise<void> {

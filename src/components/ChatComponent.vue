@@ -79,6 +79,19 @@ export default defineComponent({
       this.newMessage = '';
       this.loading = false;
     },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    async onLoad(index: any, done: any) {
+      const activeId = this.$store.state.channelStore.active;
+      const page = this.$store.state.channelStore.channels.find(
+        (channel) => channel.id === activeId
+      )?.page;
+      await this.loadMessages({
+        channelId: activeId,
+        pageNumber: page,
+      });
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+      done();
+    },
     async command() {
       switch (true) {
         case this.newMessage.startsWith('/cancel'):
@@ -102,6 +115,7 @@ export default defineComponent({
       addMessage: 'addMessage',
       leave: 'leave',
       addMember: 'addMember',
+      loadMessages: 'loadMessages',
     }),
   },
   openCurrentMessage(name: string) {
@@ -131,10 +145,6 @@ export default defineComponent({
       <q-separator />
       <div class="q-pa-md row justify-center">
         <div style="width: 90%">
-          <b>
-            <i class="text-red"> New messages &nbsp;</i>
-          </b>
-          <q-separator color="red" />
           <q-chat-message
             v-for="message in messages"
             :key="message.id"
