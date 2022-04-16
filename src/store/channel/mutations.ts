@@ -54,6 +54,17 @@ const mutation: MutationTree<ChannelStateInterface> = {
       channel.page++;
     }
   },
+  removeUser(
+    state: ChannelStateInterface,
+    { channelId, userNick }: { channelId: number; userNick: string }
+  ) {
+    const channel = state.channels.find((c) => c.id == channelId);
+    if (channel) {
+      channel.users = channel.users.filter(
+        (user) => user.username !== userNick
+      );
+    }
+  },
 };
 
 export default mutation;

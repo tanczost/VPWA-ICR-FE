@@ -1,6 +1,11 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { api } from 'src/boot/axios';
-import { Channel, ChannelUsers, RawMessage } from 'src/components/models';
+import {
+  Channel,
+  ChannelUsers,
+  Message,
+  RawMessage,
+} from 'src/components/models';
 import { channelService, notificationService } from 'src/services';
 import { ActionTree } from 'vuex';
 import { StateInterface } from '../index';
@@ -169,6 +174,28 @@ const actions: ActionTree<ChannelStateInterface, StateInterface> = {
     } catch (err) {
       console.error(err);
     }
+  },
+
+  async kickUser(
+    { commit },
+    { userNick, channelId }: { userNick: string; channelId: number }
+  ) {
+    const newMessage = await channelService.in(channelId)?.kickUser(userNick);
+    commit('NEW_MESSAGE', { channelId, message: newMessage, type: 'push' });
+  },
+
+  async revokeUser(
+    { commit },
+    { userNick, channelId }: { userNick: string; channelId: number }
+  ) {
+    const newMessage = (await channelService
+      .in(channelId)
+      ?.revokeUser(userNick)) as Message;
+    commit('NEW_MESSAGE', { channelId, message: newMessage, type: 'push' });
+  },
+
+  async quitChannel({}, channelId: number) {
+    await channelService.in(channelId)?.quitChannel(channelId);
   },
 };
 

@@ -3,6 +3,9 @@ import { StateInterface } from '../index';
 import { ChannelStateInterface } from './state';
 
 const getters: GetterTree<ChannelStateInterface, StateInterface> = {
+  getActiveChannel(state: ChannelStateInterface) {
+    return state.channels.find((c) => c.id === state.active);
+  },
   getPrivateChannels(state: ChannelStateInterface) {
     return state.channels.filter((channel) => channel.private);
   },

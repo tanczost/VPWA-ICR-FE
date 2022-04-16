@@ -7,6 +7,10 @@ const getters: GetterTree<UserStateInterface, StateInterface> = {
     return state.user?.nickName;
   },
 
+  getMyId(state: UserStateInterface): number | undefined {
+    return state.user?.id;
+  },
+
   isAuthenticated(context) {
     return context.user !== null;
   },

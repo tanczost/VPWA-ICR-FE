@@ -4,6 +4,7 @@ import { Channel, Message } from 'src/components/models';
 import { ChannelResponse, NewChannelState } from 'src/store/channel/actions';
 import { BootParams, SocketManager } from './SocketManager';
 import { AppVisibility } from 'quasar';
+import { RouteLocationRaw } from 'vue-router';
 
 // creating instance of this class automatically connects to given socket.io namespace
 // subscribe is called with boot params, so you can use it to dispatch actions for socket events
@@ -13,7 +14,7 @@ interface NewChannelResponse {
 }
 
 class ChannelSocketManager extends SocketManager {
-  public subscribe({ store }: BootParams): void {
+  public subscribe({ store, router }: BootParams): void {
     const channelId = this.namespace.split('/').pop() as string;
 
     this.socket.on('message', (message: Message) => {
@@ -45,6 +46,28 @@ class ChannelSocketManager extends SocketManager {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-call
       store.commit('channelStore/NEW_MESSAGE', { channelId, message });
     });
+
+    this.socket.on('leave', (message: Message, userNick: string) => {
+      store.commit('channelStore/removeUser', { channelId, userNick });
+      store.commit('channelStore/NEW_MESSAGE', { channelId, message });
+    });
+
+    this.socket.on('ban', (channelId: number) => {
+      store.commit('channelStore/CLEAR_CHANNEL', channelId);
+      const destination = {
+        name: 'home',
+      } as RouteLocationRaw;
+      void router.push(destination);
+    });
+
+    this.socket.on('delete', (channelId: number) => {
+      store.commit('channelStore/CLEAR_CHANNEL', channelId);
+
+      const destination = {
+        name: 'home',
+      } as RouteLocationRaw;
+      void router.push(destination);
+    });
   }
 
   public addMessage(message: string): Promise<Message> {
@@ -58,6 +81,18 @@ class ChannelSocketManager extends SocketManager {
 
   public leaveChannel(): Promise<void> {
     return this.emitAsync('leave');
+  }
+
+  public kickUser(userNick: string): Promise<Message> {
+    return this.emitAsync('kick', userNick);
+  }
+
+  public revokeUser(userNick: string): Promise<Message> {
+    return this.emitAsync('revoke', userNick);
+  }
+
+  public quitChannel(channelId: number): Promise<void> {
+    return this.emitAsync('quit', channelId);
   }
 }
 

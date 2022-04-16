@@ -45,9 +45,11 @@ export default defineComponent({
     ...mapGetters('channelStore', {
       channels: 'joinedChannels',
       lastMessageOf: 'lastMessageOf',
+      getActiveChannel: 'getActiveChannel',
     }),
     ...mapGetters('userStore', {
       getMyNickName: 'getMyNickName',
+      getMyId: 'getMyId',
     }),
     getChannelByID() {
       return this.$store.state.channelStore.channels.find(
@@ -124,6 +126,7 @@ export default defineComponent({
       }
     },
     async command() {
+      let chatData = [];
       switch (true) {
         case this.newMessage.startsWith('/cancel'):
           await this.leaveChannel();
@@ -136,13 +139,29 @@ export default defineComponent({
           this.showAllPeopleInChat = true;
           break;
         case this.newMessage.startsWith('/join'):
-          const chatData = this.newMessage.split(' ');
-          this.newMessage = '';
+          chatData = this.newMessage.split(' ');
           // eslint-disable-next-line @typescript-eslint/no-unsafe-call
           await this.createChannel(
             chatData[1],
             chatData[2] === '[private]' ? true : false
           );
+          break;
+        case this.newMessage.startsWith('/kick'):
+          chatData = this.newMessage.split(' ');
+          await this.kickUser({
+            userNick: chatData[1],
+            channelId: this.$store.state.channelStore.active,
+          });
+          break;
+        case this.newMessage.startsWith('/revoke'):
+          chatData = this.newMessage.split(' ');
+          await this.revokeUser({
+            userNick: chatData[1],
+            channelId: this.$store.state.channelStore.active,
+          });
+          break;
+        case this.newMessage.startsWith('/quit'):
+          await this.quitChannel(this.$store.state.channelStore.active);
           break;
       }
       this.newMessage = '';
@@ -156,6 +175,9 @@ export default defineComponent({
       leave: 'leave',
       addMember: 'addMember',
       loadMessages: 'loadMessages',
+      kickUser: 'kickUser',
+      revokeUser: 'revokeUser',
+      quitChannel: 'quitChannel',
     }),
   },
   openCurrentMessage(name: string) {
