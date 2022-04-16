@@ -20,6 +20,7 @@ class ChannelSocketManager extends SocketManager {
       if (AppVisibility.appVisible) {
         Notify.create({
           caption: `New message from ${message.author.nickName}`,
+          // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
           message: `${message.content.text}`,
           color: 'primary',
           position: 'top',
@@ -101,6 +102,12 @@ class ChannelService {
     const result = await api.post<NewChannelResponse>('/channel/', {
       ...requestData,
     });
+
+    return result.data;
+  }
+
+  async joinPublicChannel(channelName: string): Promise<Channel> {
+    const result = await api.get<Channel>(`/channel/${channelName}/join/`);
 
     return result.data;
   }

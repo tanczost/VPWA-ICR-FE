@@ -74,7 +74,8 @@ export default defineComponent({
       <q-toolbar-title class="row justify-end">
         <section
           class="col-md-11 col-sm-10 col-xs-8"
-          style="align-self: center"
+          style="align-self: center; cursor: pointer"
+          @click="$router.replace(`/`)"
         >
           SWAPPER
         </section>

@@ -22,7 +22,7 @@ interface ChannelUser {
 }
 
 const actions: ActionTree<ChannelStateInterface, StateInterface> = {
-  async addChannel({}, channel: Channel): Promise<boolean> {
+  async addChannel({}, channel: Channel): Promise<number> {
     try {
       const requestData: NewChannelState = {
         name: channel.name,
@@ -32,10 +32,15 @@ const actions: ActionTree<ChannelStateInterface, StateInterface> = {
       const { channelId } = await channelService.addChannel(requestData);
 
       this.commit('channelStore/addChannel', { ...channel, id: channelId });
-      return true;
+      return channelId;
     } catch (error) {
+      const newChannel = await channelService.joinPublicChannel(channel.name);
+
+      this.commit('channelStore/addChannel', { ...newChannel });
+      this.commit('channelStore/SET_ACTIVE', newChannel.id);
+
       console.error(error);
-      return false;
+      return -1;
     }
   },
 

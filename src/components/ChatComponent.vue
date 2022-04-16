@@ -109,15 +109,18 @@ export default defineComponent({
         ownerUserName: this.getMyNickName as string,
         users: [],
         messages: [],
-      })) as boolean;
+      })) as number;
 
-      if (result) {
+      if (result > 0) {
         this.$q.notify({
           message: 'Channel  successfully created',
           color: 'green',
         });
       } else {
-        this.$q.notify({ message: 'Channel can not be created', color: 'red' });
+        this.$q.notify({
+          message: 'Successfully joined to the channel',
+          color: 'green',
+        });
       }
     },
     async command() {
@@ -134,13 +137,12 @@ export default defineComponent({
           break;
         case this.newMessage.startsWith('/join'):
           const chatData = this.newMessage.split(' ');
+          this.newMessage = '';
           // eslint-disable-next-line @typescript-eslint/no-unsafe-call
           await this.createChannel(
             chatData[1],
             chatData[2] === '[private]' ? true : false
           );
-          console.log(chatData[1]);
-          console.log(chatData[2] === '[private]' ? true : false);
           break;
       }
       this.newMessage = '';
@@ -167,17 +169,7 @@ export default defineComponent({
 
 <template>
   <q-page-container>
-    <section
-      class="row"
-      style="
-        position: fixed;
-        top: 68px;
-        width: 80%;
-        z-index: 1;
-        background-color: white;
-        box-shadow: 3px 3px 5px 6px #ccc;
-      "
-    >
+    <section class="row channel-header">
       <div class="text-h3 q-ma-sm chat-title">
         {{ getChannelByID?.name }}
       </div>
@@ -189,11 +181,7 @@ export default defineComponent({
         />
       </div>
     </section>
-    <q-infinite-scroll
-      @load="onLoad"
-      reverse
-      style="position: relative; top: 70px"
-    >
+    <q-infinite-scroll @load="onLoad" reverse>
       <div class="q-pa-md row justify-center">
         <div style="width: 90%">
           <q-chat-message
@@ -331,6 +319,13 @@ export default defineComponent({
 
 .chat-dialog {
   width: 40%;
+}
+
+.channel-header {
+  position: sticky;
+  top: 65px;
+  z-index: 1;
+  background-color: white;
 }
 
 @media (max-width: 1200px) {
