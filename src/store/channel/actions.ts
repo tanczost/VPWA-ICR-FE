@@ -36,12 +36,16 @@ const actions: ActionTree<ChannelStateInterface, StateInterface> = {
 
       const { channelId } = await channelService.addChannel(requestData);
 
-      this.commit('channelStore/addChannel', { ...channel, id: channelId });
+      this.commit('channelStore/addChannel', {
+        ...channel,
+        id: channelId,
+        page: 1,
+      });
       return channelId;
     } catch (error) {
       const newChannel = await channelService.joinPublicChannel(channel.name);
 
-      this.commit('channelStore/addChannel', { ...newChannel });
+      this.commit('channelStore/addChannel', { ...newChannel, page: 1 });
       this.commit('channelStore/SET_ACTIVE', newChannel.id);
 
       console.error(error);
@@ -54,34 +58,36 @@ const actions: ActionTree<ChannelStateInterface, StateInterface> = {
       const allChannelsResult = await channelService.getChannels();
 
       const userChannelsResult = await Promise.all(
-        allChannelsResult.channels.map(async (currentChannel) => {
-          if (currentChannel.id != undefined) {
-            try {
-              const channelUsersResult = await api.get<ChannelUser>(
-                `/channel/${currentChannel.id}/users`
-              );
+        allChannelsResult.channels
+          .filter((channel) => channel !== null)
+          .map(async (currentChannel) => {
+            if (currentChannel.id != undefined) {
+              try {
+                const channelUsersResult = await api.get<ChannelUser>(
+                  `/channel/${currentChannel.id}/users`
+                );
 
-              if (channelUsersResult.status == 200) {
-                const channel: Channel = {
-                  id: currentChannel.id,
-                  private: currentChannel.private,
-                  name: currentChannel.name,
-                  lastActivity: undefined,
-                  ownerUsername: currentChannel.ownerUsername,
-                  users: channelUsersResult.data.users,
-                  messages: [],
-                  page: 2,
-                };
-                return channel;
+                if (channelUsersResult.status == 200) {
+                  const channel: Channel = {
+                    id: currentChannel.id,
+                    private: currentChannel.private,
+                    name: currentChannel.name,
+                    lastActivity: undefined,
+                    ownerUsername: currentChannel.ownerUsername,
+                    users: channelUsersResult.data.users,
+                    messages: [],
+                    page: 2,
+                  };
+                  return channel;
+                }
+
+                return false;
+              } catch (error) {
+                console.error(error);
+                return false;
               }
-
-              return false;
-            } catch (error) {
-              console.error(error);
-              return false;
             }
-          }
-        })
+          })
       );
       this.commit('channelStore/storeChannels', userChannelsResult);
       return true;
@@ -134,7 +140,10 @@ const actions: ActionTree<ChannelStateInterface, StateInterface> = {
         ?.loadMessages(pageNumber);
 
       commit('LOADING_SUCCESS', { channelId, messages });
-      commit('incrementPage', channelId);
+
+      if (messages && messages.length > 0) {
+        commit('incrementPage', channelId);
+      }
     } catch (err) {
       commit('LOADING_ERROR', err);
       throw err;
@@ -160,7 +169,7 @@ const actions: ActionTree<ChannelStateInterface, StateInterface> = {
       );
 
       channel.users = channelUsersResult.data.users;
-      this.commit('channelStore/addChannel', channel);
+      this.commit('channelStore/addChannel', { ...channel });
       this.commit('userStore/removeInvite', inviteId);
     } catch (err) {
       console.error(err);

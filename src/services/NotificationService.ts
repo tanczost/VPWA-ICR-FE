@@ -30,7 +30,7 @@ class NotificationService {
   public join(): NotificationSocketManager {
     console.log(this.notificationSocket);
     if (this.notificationSocket !== null) {
-      throw new Error('User is already joined in notifications');
+      return this.notificationSocket;
     }
 
     // connect to given channel namespace

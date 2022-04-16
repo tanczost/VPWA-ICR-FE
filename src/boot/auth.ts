@@ -1,5 +1,5 @@
 import { boot } from 'quasar/wrappers';
-import { authManager } from 'src/services';
+import { authManager, notificationService } from 'src/services';
 import { RouteLocationNormalized, RouteLocationRaw } from 'vue-router';
 
 declare module 'vue-router' {
@@ -33,6 +33,12 @@ export default boot(({ router, store }) => {
       // check if logged in if not, redirect to login page
       console.log(to);
       return loginRoute(to);
+    }
+
+    if (isAuthenticated && to.params.groupId) {
+      const groupId = to.params.groupId as string;
+      store.commit('channelStore/SET_ACTIVE', parseInt(groupId));
+      notificationService.join();
     }
 
     // route is only for guests so redirect to home

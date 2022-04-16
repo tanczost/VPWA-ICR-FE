@@ -84,7 +84,7 @@ export class CommandService {
           channelId: this.params?.store.state.channelStore.active,
         });
         break;
-      case message.startsWith('/quit'):
+      case message.startsWith('/quitChannel'):
         await this.params?.store.dispatch(
           'channelStore/quit',
           this.params.store.state.channelStore.active

@@ -10,6 +10,13 @@ import { Message } from 'src/components/models';
 export default defineComponent({
   name: 'ChannelPage',
   components: { cNavbar, cChannels, cPeople, cChat, cHome },
+  // eslint-disable-next-line @typescript-eslint/no-misused-promises
+  async created() {
+    await this.$store.dispatch(
+      'channelStore/join',
+      this.$store.state.channelStore.active
+    );
+  },
   computed: {
     messages(): Message[] {
       return this.$store.getters['channelStore/currentMessages'];
