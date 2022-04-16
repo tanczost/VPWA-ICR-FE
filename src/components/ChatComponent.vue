@@ -191,7 +191,10 @@ export default defineComponent({
 
 <template>
   <q-page-container>
-    <section class="row channel-header">
+    <section
+      class="row channel-header"
+      style="box-shadow: 3px 3px 5px 6px #ccc"
+    >
       <div class="text-h3 q-ma-sm chat-title">
         {{ getChannelByID?.name }}
       </div>
