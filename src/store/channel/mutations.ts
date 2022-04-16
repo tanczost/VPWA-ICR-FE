@@ -10,7 +10,7 @@ const mutation: MutationTree<ChannelStateInterface> = {
   CLEAR_CHANNEL(state: ChannelStateInterface, channelId: number) {
     state.active = null;
     state.channels = state.channels.filter(
-      (channel) => channel.id !== channelId
+      (channel) => channel.id != channelId
     );
   },
 

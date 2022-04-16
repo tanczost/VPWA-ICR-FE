@@ -77,7 +77,14 @@ export default defineComponent({
     },
     async send() {
       if (this.newMessage.startsWith('/')) {
-        await this.command();
+        if (this.newMessage.startsWith('/list')) {
+          this.showAllPeopleInChat = true;
+          this.newMessage = '';
+          return;
+        }
+
+        await this.$commandService.command(this.newMessage);
+        this.newMessage = '';
         return;
       }
 
@@ -92,79 +99,14 @@ export default defineComponent({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     async onLoad(index: any, done: any) {
       const activeId = this.$store.state.channelStore.active;
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       const page = this.$store.state.channelStore.channels.find(
         (channel) => channel.id === activeId
       )?.page;
       await this.loadMessages({
         channelId: activeId,
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         pageNumber: page,
       });
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
       done();
-    },
-    async createChannel(newChannelName: string, isNewChannelPrivate: boolean) {
-      const result = (await this.$store.dispatch('channelStore/addChannel', {
-        name: newChannelName,
-        private: isNewChannelPrivate,
-        ownerUserName: this.getMyNickName as string,
-        users: [],
-        messages: [],
-      })) as number;
-
-      if (result > 0) {
-        this.$q.notify({
-          message: 'Channel  successfully created',
-          color: 'green',
-        });
-      } else {
-        this.$q.notify({
-          message: 'Successfully joined to the channel',
-          color: 'green',
-        });
-      }
-    },
-    async command() {
-      let chatData = [];
-      switch (true) {
-        case this.newMessage.startsWith('/cancel'):
-          await this.leaveChannel();
-          break;
-        case this.newMessage.startsWith('/invite'):
-          const nick = this.newMessage.split(' ');
-          await this.addMember(nick[1]);
-          break;
-        case this.newMessage.startsWith('/list'):
-          this.showAllPeopleInChat = true;
-          break;
-        case this.newMessage.startsWith('/join'):
-          chatData = this.newMessage.split(' ');
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-          await this.createChannel(
-            chatData[1],
-            chatData[2] === '[private]' ? true : false
-          );
-          break;
-        case this.newMessage.startsWith('/kick'):
-          chatData = this.newMessage.split(' ');
-          await this.kickUser({
-            userNick: chatData[1],
-            channelId: this.$store.state.channelStore.active,
-          });
-          break;
-        case this.newMessage.startsWith('/revoke'):
-          chatData = this.newMessage.split(' ');
-          await this.revokeUser({
-            userNick: chatData[1],
-            channelId: this.$store.state.channelStore.active,
-          });
-          break;
-        case this.newMessage.startsWith('/quit'):
-          await this.quitChannel(this.$store.state.channelStore.active);
-          break;
-      }
-      this.newMessage = '';
     },
     ...mapMutations('channelStore', {
       setActiveChannel: 'SET_ACTIVE',
