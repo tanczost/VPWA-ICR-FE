@@ -40,6 +40,17 @@ export default defineComponent({
           description: 'You can revoke your membership in current channel.',
         },
         {
+          command: '/quit',
+          example: '/quit',
+          description:
+            'You can delete the current channel if you are the admin.',
+        },
+        {
+          command: '/revoke',
+          example: '/revoke nickName',
+          description: 'Admin kicks the user from the channel.',
+        },
+        {
           command: '@name',
           example: '@userName text',
           description: `You can mention other users in the same channel with
