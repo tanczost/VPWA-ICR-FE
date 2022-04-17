@@ -39,6 +39,12 @@ export interface Channel {
   users: ChannelUsers[];
   messages: Message[];
   page: number;
+  typers: Typer[];
+}
+
+export interface Typer {
+  userNick: string;
+  message: string;
 }
 
 export enum UserState {

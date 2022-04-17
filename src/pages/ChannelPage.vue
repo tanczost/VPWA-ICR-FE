@@ -5,7 +5,7 @@ import cChannels from '../components/ChannelsComponent.vue';
 import cPeople from '../components/PeopleComponent.vue';
 import cChat from '../components/ChatComponent.vue';
 import cHome from '../components/HomeComponent.vue';
-import { Message } from 'src/components/models';
+import { Message, Typer } from 'src/components/models';
 
 export default defineComponent({
   name: 'ChannelPage',
@@ -21,6 +21,9 @@ export default defineComponent({
     messages(): Message[] {
       return this.$store.getters['channelStore/currentMessages'];
     },
+    typers(): Typer[] {
+      return this.$store.getters['channelStore/currentTypers'];
+    },
   },
 });
 </script>
@@ -29,6 +32,6 @@ export default defineComponent({
   <c-navbar />
   <c-channels />
   <c-people />
-  <c-chat v-if="$route.params.groupId" :messages="messages" />
+  <c-chat v-if="$route.params.groupId" :messages="messages" :typers="typers" />
   <c-home v-else />
 </template>

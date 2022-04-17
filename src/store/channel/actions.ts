@@ -77,6 +77,7 @@ const actions: ActionTree<ChannelStateInterface, StateInterface> = {
                     users: channelUsersResult.data.users,
                     messages: [],
                     page: 2,
+                    typers: [],
                   };
                   return channel;
                 }
@@ -121,8 +122,13 @@ const actions: ActionTree<ChannelStateInterface, StateInterface> = {
   async join({ commit }, channelId: number) {
     try {
       commit('LOADING_START');
-      const messages = await channelService.join(channelId).loadMessages();
-      commit('LOADING_SUCCESS', { channelId, messages, type: 'shift' });
+      try {
+        const socket = channelService.join(channelId);
+        const messages = await socket.loadMessages();
+        commit('LOADING_SUCCESS', { channelId, messages, type: 'shift' });
+      } catch (err) {
+        console.warn(err);
+      }
     } catch (err) {
       commit('LOADING_ERROR', err);
       throw err;
@@ -205,6 +211,17 @@ const actions: ActionTree<ChannelStateInterface, StateInterface> = {
 
   async quitChannel({}, channelId: number) {
     await channelService.in(channelId)?.quitChannel(channelId);
+  },
+
+  async isTyping(
+    { state },
+    { userNick, message }: { userNick: string; message: string }
+  ) {
+    const channelId = state.active;
+    if (channelId === null) {
+      return;
+    }
+    await channelService.in(channelId)?.isTyping(message, userNick);
   },
 };
 

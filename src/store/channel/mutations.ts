@@ -1,4 +1,4 @@
-import { Channel, Message } from 'src/components/models';
+import { Channel, Message, Typer } from 'src/components/models';
 import { MutationTree } from 'vuex';
 import { ChannelStateInterface } from './state';
 
@@ -52,6 +52,27 @@ const mutation: MutationTree<ChannelStateInterface> = {
     const channel = state.channels.find((c) => c.id == channelId);
     if (channel) {
       channel.page++;
+    }
+  },
+  addTyper(state: ChannelStateInterface, typer: Typer) {
+    const channel = state.channels.find((c) => c.id == state.active);
+
+    if (channel) {
+      const exist = channel.typers.find((t) => t.userNick === typer.userNick);
+      if (exist) {
+        exist.message = typer.message;
+        return;
+      }
+
+      channel.typers.push(typer);
+    }
+  },
+  removeTyper(state: ChannelStateInterface, typer: Typer) {
+    const channel = state.channels.find((c) => c.id == state.active);
+    if (channel) {
+      channel.typers = channel.typers.filter(
+        (t) => t.userNick !== typer.userNick
+      );
     }
   },
   removeUser(

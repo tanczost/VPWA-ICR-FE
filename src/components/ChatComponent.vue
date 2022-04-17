@@ -2,12 +2,11 @@
 import { defineComponent, PropType } from 'vue';
 import { RouteLocationRaw } from 'vue-router';
 import { mapActions, mapGetters, mapMutations } from 'vuex';
-import { Message } from './models';
+import { Message, Typer } from './models';
 
 interface State {
   icon: boolean;
   newMessage: string;
-  typers: string[];
   showAllTypersDialog: boolean;
   currentTyper: string;
   currentText: string;
@@ -22,7 +21,6 @@ export default defineComponent({
     return {
       icon: false,
       newMessage: '',
-      typers: [],
       showAllTypersDialog: false,
       currentTyper: '',
       currentText: '',
@@ -35,6 +33,10 @@ export default defineComponent({
   props: {
     messages: {
       type: Array as PropType<Message[]>,
+      default: () => [],
+    },
+    typers: {
+      type: Array as PropType<Typer[]>,
       default: () => [],
     },
   },
@@ -61,6 +63,23 @@ export default defineComponent({
         (channel) => channel.id == +this.$route.params.groupId
       )?.users;
     },
+  },
+  watch: {
+    messages: {
+      handler() {
+        void this.$nextTick(() => this.scrollToElement());
+      },
+      deep: true,
+    },
+    typers: {
+      handler() {
+        void this.$nextTick(() => this.scrollToElement());
+      },
+      deep: true,
+    },
+  },
+  mounted() {
+    this.scrollToElement();
   },
   methods: {
     isMention(mentions: string[]): boolean {
@@ -96,6 +115,13 @@ export default defineComponent({
       this.newMessage = '';
       this.loading = false;
     },
+    scrollToElement() {
+      const el = this.$refs.bottom as Element;
+      console.log('scrollToElement');
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth' });
+      }
+    },
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     async onLoad(index: any, done: any) {
       const activeId = this.$store.state.channelStore.active;
@@ -108,6 +134,17 @@ export default defineComponent({
       });
       done();
     },
+    async typing(event: KeyboardEvent) {
+      event.preventDefault();
+
+      if (event.key === 'Enter') {
+        await this.send();
+      }
+      await this.isTyping({
+        message: this.newMessage,
+        userNick: this.getMyNickName as string,
+      });
+    },
     ...mapMutations('channelStore', {
       setActiveChannel: 'SET_ACTIVE',
     }),
@@ -115,11 +152,8 @@ export default defineComponent({
     ...mapActions('channelStore', {
       addMessage: 'addMessage',
       leave: 'leave',
-      addMember: 'addMember',
       loadMessages: 'loadMessages',
-      kickUser: 'kickUser',
-      revokeUser: 'revokeUser',
-      quitChannel: 'quitChannel',
+      isTyping: 'isTyping',
     }),
   },
   openCurrentMessage(name: string) {
@@ -146,6 +180,7 @@ export default defineComponent({
           color="red"
           label="Leave"
         />
+        <q-btn @click="scrollToElement" label="scroll" />
       </div>
     </section>
     <q-infinite-scroll @load="onLoad" reverse>
@@ -160,32 +195,23 @@ export default defineComponent({
             :sent="isMine(message)"
             :class="{ msg: true, mention: isMention(message.content.mentions) }"
           />
+          <template v-for="typer in typers" :key="typer.userNick">
+            <q-chat-message
+              :name="typer.userNick"
+              :sent="false"
+              :class="{ msg: true }"
+              class="typer-span"
+            >
+              <div>
+                <p>{{ typer.message }}</p>
+              </div>
+              <q-spinner-dots size="2rem" />
+            </q-chat-message>
+          </template>
+
+          <hr style="bottom-anchor" ref="bottom" />
         </div>
       </div>
-      <q-footer class="bg-white row bottom-text">
-        <section v-if="typers.length < 4">
-          <b v-for:="name in typers" :key="name" class="name">
-            {{ name }}&nbsp;
-          </b>
-        </section>
-        <section v-else>
-          <b v-for:="name in typers.slice(0, 3)" :key="name" class="name">
-            {{ name }}&nbsp;
-          </b>
-          <b class="name" @click="showAllTypersDialog = true">
-            and more&nbsp;
-          </b>
-        </section>
-        <p
-          v-if="typers.length == 1"
-          class="text-black"
-          style="margin-bottom: 0px"
-        >
-          is&nbsp;
-        </p>
-        <p v-else class="text-black" style="margin-bottom: 0px">are&nbsp;</p>
-        <p class="text-black" style="margin-bottom: 0px">typing...&nbsp;</p>
-      </q-footer>
     </q-infinite-scroll>
     <q-footer>
       <q-toolbar class="bg-grey-3 text-black row">
@@ -197,29 +223,12 @@ export default defineComponent({
           bg-color="white"
           v-model="newMessage"
           placeholder="Type a message"
-          @keyup.enter="send"
+          @keyup="typing"
         />
         <q-btn round flat icon="send" @click="send" />
       </q-toolbar>
     </q-footer>
   </q-page-container>
-
-  <q-dialog v-model="showAllTypersDialog" persistent>
-    <q-card class="chat-dialog">
-      <q-card-section class="row items-center q-pb-none">
-        <div class="text-h5">Current text messages</div>
-        <q-space />
-        <q-btn icon="close" flat round dense v-close-popup />
-      </q-card-section>
-
-      <q-card-section>
-        <div v-for:="name in typers" :key="name">
-          <b>{{ name }}</b
-          >: random text haha
-        </div>
-      </q-card-section>
-    </q-card>
-  </q-dialog>
 
   <q-dialog v-model="showCurrentTypersDialog" persistent>
     <q-card class="chat-dialog">
@@ -288,6 +297,10 @@ export default defineComponent({
   width: 40%;
 }
 
+.typer-span {
+  opacity: 0.5;
+}
+
 .channel-header {
   position: sticky;
   top: 65px;
@@ -335,5 +348,10 @@ export default defineComponent({
 
 .mention {
   background-color: aliceblue;
+}
+
+.bottom-anchor {
+  padding: 0;
+  margin: 0;
 }
 </style>

@@ -1,6 +1,6 @@
 import { Notify } from 'quasar';
 import { api } from 'src/boot/axios';
-import { Channel, Message } from 'src/components/models';
+import { Channel, Message, Typer } from 'src/components/models';
 import { ChannelResponse, NewChannelState } from 'src/store/channel/actions';
 import { BootParams, SocketManager } from './SocketManager';
 import { AppVisibility } from 'quasar';
@@ -68,6 +68,14 @@ class ChannelSocketManager extends SocketManager {
       } as RouteLocationRaw;
       void router.push(destination);
     });
+
+    this.socket.on('isTyping', (typer: Typer) => {
+      store.commit('channelStore/addTyper', typer);
+    });
+
+    this.socket.on('stopTyping', (typer: Typer) => {
+      store.commit('channelStore/removeTyper', typer);
+    });
   }
 
   public addMessage(message: string): Promise<Message> {
@@ -93,6 +101,10 @@ class ChannelSocketManager extends SocketManager {
 
   public quitChannel(channelId: number): Promise<void> {
     return this.emitAsync('quit', channelId);
+  }
+
+  public isTyping(message: string, userNick: string): Promise<void> {
+    return this.emitAsync('isTyping', message, userNick);
   }
 }
 

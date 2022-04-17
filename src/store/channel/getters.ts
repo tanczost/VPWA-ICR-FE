@@ -24,6 +24,12 @@ const getters: GetterTree<ChannelStateInterface, StateInterface> = {
     );
     return channel?.messages.filter((message) => message !== null) ?? [];
   },
+  currentTypers(context) {
+    const channel = context.channels.find(
+      (channel) => channel.id === context.active
+    );
+    return channel?.typers.filter((message) => message !== null) ?? [];
+  },
   lastMessageOf(context) {
     return (channelId: number) => {
       const messages = context.channels[channelId].messages;
