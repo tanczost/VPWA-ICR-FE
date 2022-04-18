@@ -202,10 +202,13 @@ export default defineComponent({
               :class="{ msg: true }"
               class="typer-span"
             >
-              <div>
-                <p>{{ typer.message }}</p>
+              <div class="typing-container">
+                <div class="overlay">
+                  <p>{{ typer.message }}</p>
+                </div>
+
+                <q-spinner-dots size="2rem" class="spinner" />
               </div>
-              <q-spinner-dots size="2rem" />
             </q-chat-message>
           </template>
 
@@ -277,6 +280,36 @@ export default defineComponent({
 </template>
 
 <style lang="scss">
+.overlay p {
+  width: max-content;
+}
+
+.overlay {
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  padding-right: 4px;
+  height: -webkit-fill-available;
+  visibility: hidden;
+  position: absolute;
+  top: 0px;
+  background-color: #81c784;
+  border-radius: 4px 4px 4px 0;
+  z-index: 9999;
+}
+
+.typing-container:hover {
+  visibility: hidden;
+}
+
+.typing-container:hover .overlay {
+  visibility: visible;
+}
+
+.typing-container:hover .spinner {
+  visibility: hidden;
+}
+
 .bottom-text {
   bottom: 50px;
   padding-left: 20px;
