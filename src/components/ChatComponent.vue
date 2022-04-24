@@ -1,4 +1,5 @@
 <script lang="ts">
+import { QScrollArea } from 'quasar';
 import { defineComponent, PropType } from 'vue';
 import { RouteLocationRaw } from 'vue-router';
 import { mapActions, mapGetters, mapMutations } from 'vuex';
@@ -78,7 +79,22 @@ export default defineComponent({
       deep: true,
     },
   },
+  mounted() {
+    this.scrollToElement();
+  },
   methods: {
+    async scrollChannel(info: { ref: QScrollArea }): Promise<void> {
+      if (info.ref.getScroll().verticalPercentage < 0.13) {
+        const activeId = this.$store.state.channelStore.active;
+        const page = this.$store.state.channelStore.channels.find(
+          (channel) => channel.id === activeId
+        )?.page;
+        await this.loadMessages({
+          channelId: activeId,
+          pageNumber: page,
+        });
+      }
+    },
     isMention(mentions: string[]): boolean {
       return mentions.includes(
         this.$store.state.userStore.user?.nickName ?? ''
@@ -119,18 +135,6 @@ export default defineComponent({
         el.scrollIntoView({ behavior: 'smooth' });
       }
     },
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    async onLoad(index: any, done: any) {
-      const activeId = this.$store.state.channelStore.active;
-      const page = this.$store.state.channelStore.channels.find(
-        (channel) => channel.id === activeId
-      )?.page;
-      await this.loadMessages({
-        channelId: activeId,
-        pageNumber: page,
-      });
-      done();
-    },
     async typing(event: KeyboardEvent) {
       event.preventDefault();
 
@@ -153,12 +157,6 @@ export default defineComponent({
       isTyping: 'isTyping',
     }),
   },
-  openCurrentMessage(name: string) {
-    this.currentTyper = name;
-    this.currentText =
-      "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including";
-    this.showCurrentTypersDialog = true;
-  },
 });
 </script>
 
@@ -180,7 +178,11 @@ export default defineComponent({
         <q-btn @click="scrollToElement" label="scroll" />
       </div>
     </section>
-    <q-infinite-scroll @load="onLoad" reverse>
+    <q-scroll-area
+      ref="area"
+      style="width: 100%; height: calc(100vh - 150px)"
+      @scroll="scrollChannel"
+    >
       <div class="q-pa-md row justify-center">
         <div style="width: 90%">
           <q-chat-message
@@ -212,7 +214,7 @@ export default defineComponent({
           <hr style="bottom-anchor" ref="bottom" />
         </div>
       </div>
-    </q-infinite-scroll>
+    </q-scroll-area>
     <q-footer>
       <q-toolbar class="bg-grey-3 text-black row">
         <q-input
