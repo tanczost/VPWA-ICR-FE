@@ -78,9 +78,6 @@ export default defineComponent({
       deep: true,
     },
   },
-  mounted() {
-    this.scrollToElement();
-  },
   methods: {
     isMention(mentions: string[]): boolean {
       return mentions.includes(
@@ -191,7 +188,7 @@ export default defineComponent({
             :key="message.id"
             :name="message.author.nickName"
             :text="[message.content.text]"
-            :stamp="message.createdAt"
+            :stamp="message.createdAt.toString()"
             :sent="isMine(message)"
             :class="{ msg: true, mention: isMention(message.content.mentions) }"
           />

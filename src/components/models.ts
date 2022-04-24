@@ -1,3 +1,5 @@
+import { DateTime } from 'luxon';
+
 export interface Todo {
   id: number;
   content: string;
@@ -19,8 +21,8 @@ export interface User {
 
 export interface Message {
   content: { text: string; mentions: string[] };
-  createdAt: string;
-  updatedAt: string;
+  createdAt: DateTime;
+  updatedAt: DateTime;
   id: number;
   author: User;
 }
