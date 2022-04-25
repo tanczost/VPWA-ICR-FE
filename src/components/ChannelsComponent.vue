@@ -112,6 +112,12 @@ export default defineComponent({
           label="Private"
         >
           <q-list dense bordered padding>
+            <p
+              v-if="getInvites.length == 0"
+              style="padding-left: 16px; padding-top: 16px"
+            >
+              You aree not in any private channel
+            </p>
             <div
               v-for="channelName in getPrivateChannels"
               :key="channelName.id"
@@ -125,6 +131,12 @@ export default defineComponent({
 
         <q-expansion-item expand-separator icon="public" label="Public">
           <q-list dense bordered padding>
+            <p
+              v-if="getInvites.length == 0"
+              style="padding-left: 16px; padding-top: 16px"
+            >
+              You are not in any public channel
+            </p>
             <div v-for="channelName in getPublicChannels" :key="channelName.id">
               <q-item clickable v-ripple @click="openChannel(channelName.id)">
                 <q-item-section>{{ channelName.name }} </q-item-section>
@@ -135,6 +147,12 @@ export default defineComponent({
 
         <q-expansion-item expand-separator icon="group_add" label="Invitations">
           <q-list dense bordered padding>
+            <p
+              v-if="getInvites.length == 0"
+              style="padding-left: 16px; padding-top: 16px"
+            >
+              You do not have any invitation
+            </p>
             <div v-for="invite in getInvites" :key="invite.id">
               <q-item
                 clickable

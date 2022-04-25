@@ -222,6 +222,12 @@ const actions: ActionTree<ChannelStateInterface, StateInterface> = {
       return;
     }
     await channelService.in(channelId)?.isTyping(message, userNick);
+
+    // send empty message to stop typing
+    // eslint-disable-next-line @typescript-eslint/no-misused-promises
+    setTimeout(async () => {
+      await channelService.in(channelId)?.isTyping('', userNick);
+    }, 3000);
   },
 };
 
