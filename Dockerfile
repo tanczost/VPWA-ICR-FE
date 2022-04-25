@@ -1,5 +1,9 @@
 FROM node:lts-alpine
 
+ARG API_URL=http://localhost:3333
+
+ENV API_URL=${API_URL}
+
 # install simple http server for serving static content
 RUN npm install -g @quasar/cli
 
