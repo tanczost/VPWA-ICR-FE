@@ -1,26 +1,52 @@
-FROM node:lts-alpine
 
-ARG API_URL=http://localhost:3333
+# ----- BUILD STAGE -----
+FROM node:lts as build-stage
 
+# Aliases setup for container folders
+ARG PWA_src="."
+ARG DIST="/pwa"
+
+# Define arguments which can be overridden at build time
+ARG API_URL="http://localhost:3333"
 ENV API_URL=${API_URL}
 
-# install simple http server for serving static content
+# Set the working directory inside the container to server module
+WORKDIR ${DIST}
+
+# Copying in two separate steps allows us to take advantage of cached Docker layers.
+COPY ${PWA_src}/package*.json ./
+
+# Install dependencies
+RUN npm install
+
+# Copy source files inside container
+COPY ${PWA_src} .
+
+# Build the SPA
+RUN npx @quasar/cli build -m pwa
+
+# ----- PRODUCTION STAGE -----
+FROM node:lts as production-stage
+
+# Aliases setup for container folders
+ARG DIST="/pwa"
+ARG PWA="/myapp"
+
+# Define environment variables for HTTP server
+ENV HOST="0.0.0.0"
+ENV PORT="8080"
+
+# Set working directory
+WORKDIR ${PWA}
+
+# Copy build artifacts from previous stage
+COPY --from=build-stage ${DIST}/dist/pwa ./
+
+# Expose port outside container
+EXPOSE ${PORT}
+
+# Install pm2
 RUN npm install -g @quasar/cli
 
-# make the 'app' folder the current working directory
-WORKDIR /app
-
-# copy both 'package.json' and 'package-lock.json' (if available)
-COPY package*.json ./
-
-# install project dependencies
-RUN npm install --prod
-
-# copy project files and folders to the current working directory (i.e. 'app' folder)
-COPY . .
-
-# build app for production with minification
-RUN npm run build
-
-EXPOSE 8080
-CMD [ "npm", "run", "dev" ]
+# Start server module inside the container
+CMD ["quasar", "serve"]
