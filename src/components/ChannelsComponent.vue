@@ -113,7 +113,7 @@ export default defineComponent({
         >
           <q-list dense bordered padding>
             <p
-              v-if="getInvites.length == 0"
+              v-if="getPublicChannels.length == 0"
               style="padding-left: 16px; padding-top: 16px"
             >
               You aree not in any private channel
@@ -132,7 +132,7 @@ export default defineComponent({
         <q-expansion-item expand-separator icon="public" label="Public">
           <q-list dense bordered padding>
             <p
-              v-if="getInvites.length == 0"
+              v-if="getPublicChannels.length == 0"
               style="padding-left: 16px; padding-top: 16px"
             >
               You are not in any public channel
