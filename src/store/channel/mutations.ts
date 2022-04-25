@@ -23,9 +23,10 @@ const mutation: MutationTree<ChannelStateInterface> = {
   },
   LOADING_SUCCESS(
     state: ChannelStateInterface,
-    { channelId, messages }: { channelId: number; messages: Message[] }
+    { channelId, messages }: { channelId: number | null; messages: Message[] }
   ) {
     state.loading = false;
+    if (channelId === null) return;
     const channel = state.channels.find((c) => c.id === channelId);
     if (channel) {
       channel.messages.unshift(...messages);

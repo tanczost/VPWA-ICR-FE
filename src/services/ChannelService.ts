@@ -162,7 +162,7 @@ class ChannelService {
   async acceptInvite(inviteId: number): Promise<Channel> {
     const result = await api.get<Channel>(`/invitations/${inviteId}/accept/`);
 
-    return result.data;
+    return { ...result.data, typers: [] };
   }
 
   async declineInvite(inviteId: number): Promise<void> {

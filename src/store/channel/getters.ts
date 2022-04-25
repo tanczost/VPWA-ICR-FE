@@ -36,6 +36,9 @@ const getters: GetterTree<ChannelStateInterface, StateInterface> = {
       return messages.length > 0 ? messages[messages.length - 1] : null;
     };
   },
+  getLoadingState(context) {
+    return context.loading;
+  },
 };
 
 export default getters;

@@ -49,6 +49,7 @@ export default defineComponent({
       channels: 'joinedChannels',
       lastMessageOf: 'lastMessageOf',
       getActiveChannel: 'getActiveChannel',
+      getLoadingState: 'getLoadingState',
     }),
     ...mapGetters('userStore', {
       getMyNickName: 'getMyNickName',
@@ -84,15 +85,20 @@ export default defineComponent({
   },
   methods: {
     async scrollChannel(info: { ref: QScrollArea }): Promise<void> {
-      if (info.ref.getScroll().verticalPercentage < 0.13) {
+      if (
+        !this.getLoadingState &&
+        info.ref.getScroll().verticalPercentage < 0.13
+      ) {
         const activeId = this.$store.state.channelStore.active;
         const page = this.$store.state.channelStore.channels.find(
           (channel) => channel.id === activeId
         )?.page;
+        this.LOADING_START();
         await this.loadMessages({
           channelId: activeId,
           pageNumber: page,
         });
+        this.LOADING_SUCCESS(-1);
       }
     },
     isMention(mentions: string[]): boolean {
@@ -148,6 +154,8 @@ export default defineComponent({
     },
     ...mapMutations('channelStore', {
       setActiveChannel: 'SET_ACTIVE',
+      LOADING_START: 'LOADING_START',
+      LOADING_SUCCESS: 'LOADING_SUCCESS',
     }),
     ...mapActions('user', ['logout']),
     ...mapActions('channelStore', {
