@@ -1,6 +1,6 @@
 import { Invitation } from 'src/components/models';
 import { BootParams, SocketManager } from './SocketManager';
-import { Notify } from 'quasar';
+import { popUpService } from 'src/boot/popup';
 
 class NotificationSocketManager extends SocketManager {
   public subscribe({ store }: BootParams): void {
@@ -9,11 +9,7 @@ class NotificationSocketManager extends SocketManager {
     this.socket.on('invite', (invite: Invitation) => {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-call
       const message = `${invite.invitedByNickName} invited you to the channel: ${invite.channelName}`;
-      Notify.create({
-        message,
-        color: 'red',
-        position: 'top-right',
-      });
+      popUpService.createNotification(message, 'red');
       store.commit('userStore/addInvitation', invite);
     });
   }
