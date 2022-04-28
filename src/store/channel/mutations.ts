@@ -87,6 +87,18 @@ const mutation: MutationTree<ChannelStateInterface> = {
       );
     }
   },
+  addUser(
+    state: ChannelStateInterface,
+    {
+      user,
+      channelId,
+    }: { user: { username: string; state: number }; channelId: number }
+  ) {
+    const channel = state.channels.find((c) => c.id == channelId);
+    if (channel) {
+      channel.users.push(user);
+    }
+  },
 };
 
 export default mutation;

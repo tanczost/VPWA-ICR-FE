@@ -1,6 +1,7 @@
 import { AxiosError, AxiosRequestConfig } from 'axios';
 import { api } from 'src/boot/axios';
 import { User } from 'src/components/models';
+import { activityService } from '.';
 
 export interface LoginData {
   nickName: string;
@@ -38,6 +39,9 @@ class AuthService {
 
   async login(credentials: LoginData): Promise<LoginResponse> {
     const response = await api.post<LoginResponse>('/login/', credentials);
+    activityService.join();
+    const nickName = credentials.nickName;
+    void activityService.getActivitySocket()?.changeActivity(nickName);
     return response.data;
   }
 

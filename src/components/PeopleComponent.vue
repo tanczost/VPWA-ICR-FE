@@ -12,9 +12,30 @@ export default defineComponent({
       },
     },
     getChannelUsers() {
-      return this.$store.state.channelStore.channels.find(
+      let result: { username: string; state: number }[] = [];
+      let channelUsers = this.$store.state.channelStore.channels.find(
         (channel) => channel.id == +this.$route.params.groupId
       )?.users;
+      channelUsers?.forEach((user) => {
+        let isOnline = false;
+        this.$store.state.activityStore.users.forEach((act) => {
+          if (user.username === act.username) {
+            isOnline = true;
+            result.push(act);
+          }
+          if (user.username === this.$store.state.userStore.user?.nickName) {
+            isOnline = true;
+            result.push({
+              username: user.username,
+              state: this.$store.state.userStore.user?.status,
+            });
+          }
+        });
+        if (!isOnline) {
+          result.push({ username: user.username, state: 3 });
+        }
+      });
+      return result;
     },
     getChannelAdmin() {
       return this.$store.state.channelStore.channels.find(

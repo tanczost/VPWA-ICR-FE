@@ -52,6 +52,13 @@ class ChannelSocketManager extends SocketManager {
       store.commit('channelStore/NEW_MESSAGE', { channelId, message });
     });
 
+    this.socket.on(
+      'addUser',
+      (user: { username: string; state: number }, channelId: number) => {
+        store.commit('channelStore/addUser', { user, channelId });
+      }
+    );
+
     this.socket.on('ban', (channelId: number) => {
       store.commit('channelStore/CLEAR_CHANNEL', channelId);
       const destination = {
@@ -76,6 +83,10 @@ class ChannelSocketManager extends SocketManager {
     this.socket.on('stopTyping', (typer: Typer) => {
       store.commit('channelStore/removeTyper', typer);
     });
+  }
+
+  public activityState(username: string): Promise<Message> {
+    return this.emitAsync('addMessage', username);
   }
 
   public addMessage(message: string): Promise<Message> {

@@ -1,4 +1,5 @@
 <script lang="ts">
+import { activityService } from 'src/services';
 import { defineComponent } from 'vue';
 import { mapGetters } from 'vuex';
 import { UserState } from './models';
@@ -18,6 +19,7 @@ export default defineComponent({
   computed: {
     ...mapGetters('userStore', {
       getUserInfo: 'getUserInfo',
+      getMyNickname: 'getMyNickName',
     }),
     isLeftSideDrawerOpen: {
       get() {
@@ -40,7 +42,15 @@ export default defineComponent({
     getMyState(state: number): string {
       return UserState[state - 1];
     },
-    ChangeStatus(index: number) {
+    async ChangeStatus(index: number) {
+      if (index === this.$store.state.userStore.user?.status) {
+        return;
+      }
+
+      await activityService
+        .getActivitySocket()
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+        ?.changeStatus(this.getMyNickname, index);
       this.$store.commit('userStore/setUserStatus', index);
     },
     async logout() {
@@ -54,7 +64,6 @@ export default defineComponent({
     },
   },
   mounted() {
-    console.log('fasz');
     this.$store.commit('userStore/setUserStatus', 1);
   },
 });

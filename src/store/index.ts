@@ -16,6 +16,9 @@ import { UserStateInterface } from './user/state';
 import channelStore from './channel';
 import { ChannelStateInterface } from './channel/state';
 
+import activityStore from './activity';
+import { ActivityStateInterface } from './activity/state';
+
 /*
  * If not building with SSR mode, you can
  * directly export the Store instantiation;
@@ -32,6 +35,7 @@ export interface StateInterface {
   userStore: UserStateInterface;
   channelStore: ChannelStateInterface;
   drawerStore: DrawerStateInterface;
+  activityStore: ActivityStateInterface;
 }
 
 // provide typings for `this.$store`
@@ -55,6 +59,7 @@ export default store(function (/* { ssrContext } */) {
       userStore,
       channelStore,
       drawerStore,
+      activityStore,
     },
 
     // enable strict mode (adds overhead!)
