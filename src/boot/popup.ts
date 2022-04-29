@@ -6,7 +6,7 @@ import { PopUpService } from 'src/services/PopUpService';
 
 declare module '@vue/runtime-core' {
   interface ComponentCustomProperties {
-    $popUpSeervice: PopUpService;
+    $popUpService: PopUpService;
   }
 }
 

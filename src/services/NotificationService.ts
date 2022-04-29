@@ -9,7 +9,7 @@ class NotificationSocketManager extends SocketManager {
     this.socket.on('invite', (invite: Invitation) => {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-call
       const message = `${invite.invitedByNickName} invited you to the channel: ${invite.channelName}`;
-      popUpService.createNotification(message, 'red');
+      popUpService.createPopUp(message, 'red');
       store.commit('userStore/addInvitation', invite);
     });
   }

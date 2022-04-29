@@ -62,11 +62,11 @@ export default defineComponent({
           )) as boolean;
 
           console.log(channels);
-          this.$q.notify({ message: 'Login successful', color: 'green' });
+          this.$popUpService.createPopUp('Login successful', 'green');
           return this.$router.push(this.redirectTo);
         })
         .catch(() => {
-          this.$q.notify({ message: 'Bad credentials', color: 'red' });
+          this.$popUpService.createPopUp('Bad credentials', 'red');
         });
     },
   },

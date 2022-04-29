@@ -15,7 +15,6 @@ class ActivitySocketManager extends SocketManager {
     this.socket.on('user:list', (onlineUsers: ActivityUser[]) => {
       console.log('Online users list ->');
       onlineUsers.forEach((user) => {
-        console.log(user.notify);
         if (user.notify) {
           store.commit('activityStore/addAllOnlineUsers', {
             nickName: user.nickName,

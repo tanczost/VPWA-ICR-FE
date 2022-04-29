@@ -81,15 +81,15 @@ export default defineComponent({
       })) as boolean;
 
       if (result) {
-        this.$q.notify({
-          message: 'Channel  successfully created',
-          color: 'green',
-        });
+        this.$popUpService.createPopUp(
+          'Channel  successfully created',
+          'green'
+        );
         this.showNewChannelDialog = false;
         this.newChannelName = '';
         this.isNewChannelPrivate = false;
       } else {
-        this.$q.notify({ message: 'Channel can not be created', color: 'red' });
+        this.$popUpService.createPopUp('Channel can not be created', 'red');
       }
     },
   },

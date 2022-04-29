@@ -1,10 +1,9 @@
-import { Notify } from 'quasar';
 import { api } from 'src/boot/axios';
 import { Channel, Message, Typer } from 'src/components/models';
 import { ChannelResponse, NewChannelState } from 'src/store/channel/actions';
 import { BootParams, SocketManager } from './SocketManager';
-import { AppVisibility } from 'quasar';
 import { RouteLocationRaw } from 'vue-router';
+import { popUpService } from 'src/boot/popup';
 
 // creating instance of this class automatically connects to given socket.io namespace
 // subscribe is called with boot params, so you can use it to dispatch actions for socket events
@@ -18,31 +17,23 @@ class ChannelSocketManager extends SocketManager {
     const channelId = this.namespace.split('/').pop() as string;
 
     this.socket.on('message', (message: Message) => {
-      if (AppVisibility.appVisible) {
-        Notify.create({
-          caption: `New message from ${message.author.nickName}`,
-          // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-          message: `${message.content.text}`,
-          color: 'primary',
-          position: 'top',
-          actions: [
-            {
-              label: 'Dismiss',
-              color: 'white',
-              handler: () => {
-                /* ... */
-              },
-            },
-            {
-              label: 'Reply',
-              color: 'yellow',
-              handler: () => {
-                // TODO navigate into channel
-              },
-            },
-          ],
-        });
-      }
+      const actions = [
+        {
+          label: 'Dismiss',
+          color: 'white',
+          handler: () => {
+            /* ... */
+          },
+        },
+        {
+          label: 'Reply',
+          color: 'yellow',
+          handler: () => {
+            void router.push(`/channels/${channelId}`);
+          },
+        },
+      ];
+      popUpService.createPopUp(message.content.text, 'green', actions);
       // eslint-disable-next-line @typescript-eslint/no-unsafe-call
       store.commit('channelStore/NEW_MESSAGE', { channelId, message });
     });

@@ -1,6 +1,7 @@
 import type { BootCallback } from '@quasar/app';
 import { StateInterface } from 'src/store';
 import { Notify } from 'quasar';
+import { AppVisibility } from 'quasar';
 
 export type BootParams<
   T extends BootCallback<StateInterface> = BootCallback<StateInterface>
@@ -13,7 +14,7 @@ export class PopUpService {
     this.params = params;
   }
 
-  public createNotification(
+  public createPopUp(
     message: string,
     color: 'red' | 'green',
     actions?: unknown[]

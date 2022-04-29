@@ -57,9 +57,9 @@ export default defineComponent({
       try {
         await this.$store.dispatch('userStore/logout');
 
-        this.$q.notify({ message: 'Logout successful', color: 'green' });
+        this.$popUpService.createPopUp('Logout successful', 'green');
       } catch (error) {
-        this.$q.notify({ message: 'Logout failed, try again! ', color: 'red' });
+        this.$popUpService.createPopUp('Logout failed, try again! ', 'red');
       }
     },
   },
