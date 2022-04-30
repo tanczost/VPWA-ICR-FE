@@ -1,4 +1,5 @@
 import { Channel, Message, Typer } from 'src/components/models';
+import { channelService } from 'src/services';
 import { MutationTree } from 'vuex';
 import { ChannelStateInterface } from './state';
 
@@ -111,7 +112,21 @@ const mutation: MutationTree<ChannelStateInterface> = {
   },
 
   // destroy tokens and go offline
-  // disconnectFromChannels(state: ChannelStateInterface) {},
+  disconnectFromChannels(state: ChannelStateInterface) {
+    const channels = state.channels ?? [];
+
+    channels.forEach((c) => {
+      if (c.id) channelService.leave(c.id);
+    });
+  },
+
+  connectToChannels(state: ChannelStateInterface) {
+    const channels = state.channels ?? [];
+    console.log(channels);
+    channels.forEach((c) => {
+      if (c.id) channelService.join(c.id);
+    });
+  },
 };
 
 export default mutation;

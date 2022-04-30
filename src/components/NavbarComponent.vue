@@ -1,7 +1,7 @@
 <script lang="ts">
 import { activityService } from 'src/services';
 import { defineComponent } from 'vue';
-import { mapGetters } from 'vuex';
+import { mapActions, mapGetters, mapMutations } from 'vuex';
 import { UserState } from './models';
 
 interface State {
@@ -21,6 +21,7 @@ export default defineComponent({
       getUserInfo: 'getUserInfo',
       getMyNickname: 'getMyNickName',
     }),
+    ...mapGetters('channelStore', { joinedChannelsIds: 'joinedChannelsIds' }),
     isLeftSideDrawerOpen: {
       get() {
         return this.$store.state.drawerStore.leftDrawerOpened;
@@ -39,12 +40,42 @@ export default defineComponent({
     },
   },
   methods: {
+    ...mapMutations('channelStore', {
+      disconnectFromChannels: 'disconnectFromChannels',
+      connectToChannels: 'connectToChannels',
+    }),
+    ...mapActions('channelStore', {
+      loadNewMessages: 'loadNewMessages',
+    }),
     getMyState(state: number): string {
       return UserState[state - 1];
     },
     async ChangeStatus(index: number) {
       if (index === this.$store.state.userStore.user?.status) {
         return;
+      }
+      console.log(index, this.$store.state.userStore.user?.status);
+      if (index === 3) {
+        this.disconnectFromChannels();
+      }
+      // user come back from offline state
+      // index is the new state [online, DND] old state is offline, load new messages
+      // TODO fix
+      else if (index !== 3 && this.$store.state.userStore.user?.status === 3) {
+        this.connectToChannels();
+        const channelIds = this.joinedChannelsIds as number[];
+        console.log(channelIds);
+        // eslint-disable-next-line @typescript-eslint/no-misused-promises
+        channelIds.forEach(async (id) => {
+          const messages =
+            this.$store.state.channelStore.channels.find(
+              (channel) => channel.id === id
+            )?.messages ?? [];
+          const lastMessageDate = messages[messages.length - 1].createdAt;
+          await this.loadNewMessages(lastMessageDate);
+        });
+      } else {
+        this.connectToChannels();
       }
 
       await activityService

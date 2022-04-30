@@ -12,6 +12,11 @@ export default defineComponent({
   components: { cNavbar, cChannels, cPeople, cChat, cHome },
   created() {
     const channelsIds = this.$store.state.channelStore.channels;
+    const myStatus = this.$store.state.userStore.user?.status as number;
+
+    // user is offline do not connect sockets
+    if (myStatus === 3) return;
+
     // eslint-disable-next-line @typescript-eslint/no-misused-promises
     channelsIds.forEach(async (channel: Channel) => {
       await this.$store.dispatch('channelStore/join', channel.id);

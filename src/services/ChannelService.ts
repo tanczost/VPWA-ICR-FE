@@ -89,6 +89,10 @@ class ChannelSocketManager extends SocketManager {
     return this.emitAsync('loadMessages', date);
   }
 
+  public loadNewMessages(date: DateTime): Promise<Message[]> {
+    return this.emitAsync('loadNewMessages', date);
+  }
+
   public leaveChannel(): Promise<void> {
     return this.emitAsync('leave');
   }

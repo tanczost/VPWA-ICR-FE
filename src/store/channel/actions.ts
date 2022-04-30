@@ -145,12 +145,24 @@ const actions: ActionTree<ChannelStateInterface, StateInterface> = {
     try {
       commit('LOADING_START');
       const messages = await channelService.in(channelId)?.loadMessages(date);
-
       commit('LOADING_SUCCESS', { channelId, messages });
+    } catch (err) {
+      commit('LOADING_ERROR', err);
+      throw err;
+    }
+  },
 
-      if (messages && messages.length > 0) {
-        commit('incrementPage', channelId);
-      }
+  async loadNewMessages(
+    { commit },
+    { channelId, date }: { channelId: number; date: DateTime }
+  ) {
+    try {
+      console.log('Loading new messages');
+      commit('LOADING_START');
+      const messages = await channelService
+        .in(channelId)
+        ?.loadNewMessages(date);
+      commit('LOADING_SUCCESS', { channelId, messages });
     } catch (err) {
       commit('LOADING_ERROR', err);
       throw err;
