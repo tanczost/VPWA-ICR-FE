@@ -1,7 +1,6 @@
 import type { BootCallback } from '@quasar/app';
 import { StateInterface } from 'src/store';
 import { Notify } from 'quasar';
-import { AppVisibility } from 'quasar';
 
 export type BootParams<
   T extends BootCallback<StateInterface> = BootCallback<StateInterface>
@@ -19,7 +18,12 @@ export class PopUpService {
     color: 'red' | 'green',
     actions?: unknown[]
   ): void {
-    if (this.params?.store.state.userStore.user?.status === 1) {
+    const pattern = /\B@[a-z0-9_-]+/gi;
+    const found: string[] = message.match(pattern) ?? [];
+    const nick = this.params?.store.state.userStore.user?.nickName as string;
+    const isMention: boolean = found.includes(`@${nick}`);
+
+    if (isMention || this.params?.store.state.userStore.user?.status === 1) {
       Notify.create({
         message,
         color,

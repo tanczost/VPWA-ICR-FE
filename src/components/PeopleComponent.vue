@@ -38,9 +38,23 @@ export default defineComponent({
       return result;
     },
     getChannelAdmin() {
-      return this.$store.state.channelStore.channels.find(
+      const admin = this.$store.state.channelStore.channels.find(
         (channel) => channel.id == +this.$route.params.groupId
       )?.ownerUsername;
+
+      if (!admin) return;
+
+      let state: { username: string; state: number } = {
+        username: admin,
+        state: 1,
+      };
+      this.$store.state.activityStore.users.forEach((act) => {
+        if (admin === act.username) {
+          state.state = act.state;
+        }
+      });
+
+      return state;
     },
   },
 });
@@ -62,9 +76,23 @@ export default defineComponent({
         <q-list bordered separator>
           <q-item v-ripple nowrap>
             <q-item-section style="max-width: 5%">
-              <q-icon name="fiber_manual_record" style="color: red" />
+              <q-icon
+                v-if="getChannelAdmin?.state == 1"
+                name="fiber_manual_record"
+                style="color: green"
+              />
+              <q-icon
+                v-if="getChannelAdmin?.state == 2"
+                name="fiber_manual_record"
+                style="color: red"
+              />
+              <q-icon
+                v-if="getChannelAdmin?.state == 3"
+                name="fiber_manual_record"
+                style="color: gray"
+              />
             </q-item-section>
-            <q-item-section> {{ getChannelAdmin }} </q-item-section>
+            <q-item-section> {{ getChannelAdmin?.username }} </q-item-section>
           </q-item>
         </q-list>
       </div>
@@ -76,7 +104,11 @@ export default defineComponent({
     </div>
     <div class="q-pa-md">
       <div v-for="user in getChannelUsers" :key="user.username">
-        <q-list v-if="user.username != getChannelAdmin" bordered separator>
+        <q-list
+          v-if="user.username != getChannelAdmin?.username"
+          bordered
+          separator
+        >
           <q-item v-ripple nowrap>
             <q-item-section style="max-width: 5%">
               <q-icon
