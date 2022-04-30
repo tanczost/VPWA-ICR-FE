@@ -4,6 +4,7 @@ import { ChannelResponse, NewChannelState } from 'src/store/channel/actions';
 import { BootParams, SocketManager } from './SocketManager';
 import { RouteLocationRaw } from 'vue-router';
 import { popUpService } from 'src/boot/popup';
+import { DateTime } from 'luxon';
 
 // creating instance of this class automatically connects to given socket.io namespace
 // subscribe is called with boot params, so you can use it to dispatch actions for socket events
@@ -84,9 +85,8 @@ class ChannelSocketManager extends SocketManager {
     return this.emitAsync('addMessage', message);
   }
 
-  public loadMessages(pageNumber?: number): Promise<Message[]> {
-    const page = pageNumber ?? 1;
-    return this.emitAsync('loadMessages', page);
+  public loadMessages(date?: DateTime): Promise<Message[]> {
+    return this.emitAsync('loadMessages', date);
   }
 
   public leaveChannel(): Promise<void> {

@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
+import { DateTime } from 'luxon';
 import { api } from 'src/boot/axios';
 import {
   Channel,
@@ -137,13 +138,11 @@ const actions: ActionTree<ChannelStateInterface, StateInterface> = {
 
   async loadMessages(
     { commit },
-    { channelId, pageNumber }: { channelId: number; pageNumber: number }
+    { channelId, date }: { channelId: number; date: DateTime }
   ) {
     try {
       commit('LOADING_START');
-      const messages = await channelService
-        .in(channelId)
-        ?.loadMessages(pageNumber);
+      const messages = await channelService.in(channelId)?.loadMessages(date);
 
       commit('LOADING_SUCCESS', { channelId, messages });
 

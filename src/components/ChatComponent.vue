@@ -90,13 +90,13 @@ export default defineComponent({
         info.ref.getScroll().verticalPercentage < 0.13
       ) {
         const activeId = this.$store.state.channelStore.active;
-        const page = this.$store.state.channelStore.channels.find(
+        const lastMessageDate = this.$store.state.channelStore.channels.find(
           (channel) => channel.id === activeId
-        )?.page;
+        )?.messages[0].createdAt;
         this.LOADING_START();
         await this.loadMessages({
           channelId: activeId,
-          pageNumber: page,
+          date: lastMessageDate,
         });
         this.LOADING_SUCCESS(-1);
       }
