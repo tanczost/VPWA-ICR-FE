@@ -40,7 +40,6 @@ const actions: ActionTree<ChannelStateInterface, StateInterface> = {
       this.commit('channelStore/addChannel', {
         ...channel,
         id: channelId,
-        page: 1,
       });
       return channelId;
     } catch (error) {
@@ -98,6 +97,7 @@ const actions: ActionTree<ChannelStateInterface, StateInterface> = {
       return false;
     }
   },
+
   async addMessage(
     { commit },
     { channelId, message }: { channelId: number; message: RawMessage }
@@ -122,6 +122,8 @@ const actions: ActionTree<ChannelStateInterface, StateInterface> = {
 
   async join({ commit }, channelId: number) {
     try {
+      const alreadyJoined = !!channelService.in(channelId);
+      if (alreadyJoined) return;
       commit('LOADING_START');
       try {
         const socket = channelService.join(channelId);
@@ -180,6 +182,7 @@ const actions: ActionTree<ChannelStateInterface, StateInterface> = {
       console.error(err);
     }
   },
+
   async declineInvite({}, inviteId: number) {
     try {
       await channelService.declineInvite(inviteId);

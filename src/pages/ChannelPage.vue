@@ -5,17 +5,17 @@ import cChannels from '../components/ChannelsComponent.vue';
 import cPeople from '../components/PeopleComponent.vue';
 import cChat from '../components/ChatComponent.vue';
 import cHome from '../components/HomeComponent.vue';
-import { Message, Typer } from 'src/components/models';
+import { Channel, Message, Typer } from 'src/components/models';
 
 export default defineComponent({
   name: 'ChannelPage',
   components: { cNavbar, cChannels, cPeople, cChat, cHome },
-  // eslint-disable-next-line @typescript-eslint/no-misused-promises
-  async created() {
-    await this.$store.dispatch(
-      'channelStore/join',
-      this.$store.state.channelStore.active
-    );
+  created() {
+    const channelsIds = this.$store.state.channelStore.channels;
+    // eslint-disable-next-line @typescript-eslint/no-misused-promises
+    channelsIds.forEach(async (channel: Channel) => {
+      await this.$store.dispatch('channelStore/join', channel.id);
+    });
   },
   computed: {
     messages(): Message[] {

@@ -115,9 +115,8 @@ class ChannelService {
 
   public join(channelId: number): ChannelSocketManager {
     if (this.channels.has(channelId)) {
-      throw new Error(
-        `User is already joined in channel with id: "${channelId}"`
-      );
+      const channel = this.channels.get(channelId);
+      if (channel) return channel;
     }
 
     // connect to given channel namespace

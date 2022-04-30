@@ -17,10 +17,12 @@ const mutation: MutationTree<ChannelStateInterface> = {
   storeChannels(state: ChannelStateInterface, channels: Channel[]) {
     state.channels.push(...channels);
   },
+
   LOADING_START(state: ChannelStateInterface) {
     state.loading = true;
     state.error = null;
   },
+
   LOADING_SUCCESS(
     state: ChannelStateInterface,
     { channelId, messages }: { channelId: number | null; messages: Message[] }
@@ -32,14 +34,17 @@ const mutation: MutationTree<ChannelStateInterface> = {
       channel.messages.unshift(...messages);
     }
   },
+
   LOADING_ERROR(state: ChannelStateInterface, error) {
     state.loading = false;
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     state.error = error;
   },
+
   SET_ACTIVE(state: ChannelStateInterface, channelId: number) {
     state.active = channelId;
   },
+
   NEW_MESSAGE(
     state: ChannelStateInterface,
     { channelId, message }: { channelId: number; message: Message }
@@ -49,12 +54,14 @@ const mutation: MutationTree<ChannelStateInterface> = {
       channel.messages.push(message);
     }
   },
+
   incrementPage(state: ChannelStateInterface, channelId: number) {
     const channel = state.channels.find((c) => c.id == channelId);
     if (channel) {
       channel.page++;
     }
   },
+
   addTyper(state: ChannelStateInterface, typer: Typer) {
     const channel = state.channels.find((c) => c.id == state.active);
 
@@ -68,6 +75,7 @@ const mutation: MutationTree<ChannelStateInterface> = {
       channel.typers.push(typer);
     }
   },
+
   removeTyper(state: ChannelStateInterface, typer: Typer) {
     const channel = state.channels.find((c) => c.id == state.active);
     if (channel) {
@@ -76,6 +84,7 @@ const mutation: MutationTree<ChannelStateInterface> = {
       );
     }
   },
+
   removeUser(
     state: ChannelStateInterface,
     { channelId, userNick }: { channelId: number; userNick: string }
@@ -87,6 +96,7 @@ const mutation: MutationTree<ChannelStateInterface> = {
       );
     }
   },
+
   addUser(
     state: ChannelStateInterface,
     {
@@ -99,6 +109,9 @@ const mutation: MutationTree<ChannelStateInterface> = {
       channel.users.push(user);
     }
   },
+
+  // destroy tokens and go offline
+  // disconnectFromChannels(state: ChannelStateInterface) {},
 };
 
 export default mutation;
