@@ -47,6 +47,7 @@ export interface Channel {
 export interface Typer {
   userNick: string;
   message: string;
+  channelId: number;
 }
 
 export enum UserState {

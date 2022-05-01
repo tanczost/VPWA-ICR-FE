@@ -64,7 +64,6 @@ export default defineComponent({
       else if (index !== 3 && this.$store.state.userStore.user?.status === 3) {
         this.connectToChannels();
         const channelIds = this.joinedChannelsIds as number[];
-        console.log(channelIds);
         // eslint-disable-next-line @typescript-eslint/no-misused-promises
         channelIds.forEach(async (id) => {
           const messages =
@@ -72,7 +71,10 @@ export default defineComponent({
               (channel) => channel.id === id
             )?.messages ?? [];
           const lastMessageDate = messages[messages.length - 1].createdAt;
-          await this.loadNewMessages(lastMessageDate);
+          await this.loadNewMessages({
+            channelId: id,
+            date: lastMessageDate,
+          });
         });
       } else {
         this.connectToChannels();

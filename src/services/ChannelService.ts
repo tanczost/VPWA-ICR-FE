@@ -109,8 +109,12 @@ class ChannelSocketManager extends SocketManager {
     return this.emitAsync('quit', channelId);
   }
 
-  public isTyping(message: string, userNick: string): Promise<void> {
-    return this.emitAsync('isTyping', message, userNick);
+  public isTyping(
+    message: string,
+    userNick: string,
+    channelId: number
+  ): Promise<void> {
+    return this.emitAsync('isTyping', message, userNick, channelId);
   }
 }
 

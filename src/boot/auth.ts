@@ -35,10 +35,11 @@ export default boot(({ router, store }) => {
       return loginRoute(to);
     }
 
+    if (isAuthenticated) notificationService.join();
+
     if (isAuthenticated && to.params.groupId) {
       const groupId = to.params.groupId as string;
       store.commit('channelStore/SET_ACTIVE', parseInt(groupId));
-      notificationService.join();
     }
 
     // route is only for guests so redirect to home

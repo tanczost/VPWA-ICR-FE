@@ -40,12 +40,13 @@ const actions: ActionTree<ChannelStateInterface, StateInterface> = {
       this.commit('channelStore/addChannel', {
         ...channel,
         id: channelId,
+        typers: [],
       });
       return channelId;
     } catch (error) {
       const newChannel = await channelService.joinPublicChannel(channel.name);
 
-      this.commit('channelStore/addChannel', { ...newChannel, page: 1 });
+      this.commit('channelStore/addChannel', { ...newChannel });
       this.commit('channelStore/SET_ACTIVE', newChannel.id);
 
       console.error(error);
@@ -159,10 +160,10 @@ const actions: ActionTree<ChannelStateInterface, StateInterface> = {
     try {
       console.log('Loading new messages');
       commit('LOADING_START');
-      const messages = await channelService
-        .in(channelId)
-        ?.loadNewMessages(date);
-      commit('LOADING_SUCCESS', { channelId, messages });
+      const socket = channelService.in(channelId);
+      const messages = await socket?.loadNewMessages(date);
+      commit('LOADING_SUCCESS', { channelId: -1, message: [] });
+      commit('NEW_MESSAGE', { channelId, message: messages });
     } catch (err) {
       commit('LOADING_ERROR', err);
       throw err;
@@ -235,13 +236,7 @@ const actions: ActionTree<ChannelStateInterface, StateInterface> = {
     if (channelId === null) {
       return;
     }
-    await channelService.in(channelId)?.isTyping(message, userNick);
-
-    // send empty message to stop typing
-    // eslint-disable-next-line @typescript-eslint/no-misused-promises
-    setTimeout(async () => {
-      await channelService.in(channelId)?.isTyping('', userNick);
-    }, 3000);
+    await channelService.in(channelId)?.isTyping(message, userNick, channelId);
   },
 };
 

@@ -48,11 +48,15 @@ const mutation: MutationTree<ChannelStateInterface> = {
 
   NEW_MESSAGE(
     state: ChannelStateInterface,
-    { channelId, message }: { channelId: number; message: Message }
+    { channelId, message }: { channelId: number; message: Message[] | Message }
   ) {
     const channel = state.channels.find((c) => c.id == channelId);
     if (channel) {
-      channel.messages.push(message);
+      if (Array.isArray(message)) {
+        channel.messages.push(...message);
+      } else {
+        channel.messages.push(message);
+      }
     }
   },
 
@@ -64,7 +68,7 @@ const mutation: MutationTree<ChannelStateInterface> = {
   },
 
   addTyper(state: ChannelStateInterface, typer: Typer) {
-    const channel = state.channels.find((c) => c.id == state.active);
+    const channel = state.channels.find((c) => c.id == typer.channelId);
 
     if (channel) {
       const exist = channel.typers.find((t) => t.userNick === typer.userNick);
@@ -78,7 +82,7 @@ const mutation: MutationTree<ChannelStateInterface> = {
   },
 
   removeTyper(state: ChannelStateInterface, typer: Typer) {
-    const channel = state.channels.find((c) => c.id == state.active);
+    const channel = state.channels.find((c) => c.id == typer.channelId);
     if (channel) {
       channel.typers = channel.typers.filter(
         (t) => t.userNick !== typer.userNick
