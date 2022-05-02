@@ -72,8 +72,8 @@ export default defineComponent({
         return;
       }
 
-      void this.$store.dispatch('userStore/register', data).then(() => {
-        this.$popUpService.createPopUp('Register successful', 'green');
+      void this.$store.dispatch('userStore/register', data).then(async () => {
+        await this.$popUpService.createPopUp('Register successful', 'green');
         return this.$router.push(this.redirectTo);
       });
     },

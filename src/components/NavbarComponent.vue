@@ -90,9 +90,12 @@ export default defineComponent({
       try {
         await this.$store.dispatch('userStore/logout');
 
-        this.$popUpService.createPopUp('Logout successful', 'green');
+        await this.$popUpService.createPopUp('Logout successful', 'green');
       } catch (error) {
-        this.$popUpService.createPopUp('Logout failed, try again! ', 'red');
+        await this.$popUpService.createPopUp(
+          'Logout failed, try again! ',
+          'red'
+        );
       }
     },
   },
