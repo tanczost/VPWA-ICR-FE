@@ -178,12 +178,12 @@ export default defineComponent({
         {{ getChannelByID?.name }}
       </div>
       <div class="centerY">
+        <q-btn @click="scrollToElement" label="scroll" />
         <q-btn
           @click="showLeaveConfirmationDialog = true"
           color="red"
           label="Leave"
         />
-        <q-btn @click="scrollToElement" label="scroll" />
       </div>
     </section>
     <q-scroll-area
@@ -326,11 +326,13 @@ export default defineComponent({
   cursor: pointer;
 }
 .centerY {
+  width: 18%;
   display: flex;
   align-items: center;
+  justify-content: space-evenly;
 }
 .chat-title {
-  width: 85%;
+  width: 80%;
 }
 
 .chat-dialog {
@@ -350,7 +352,7 @@ export default defineComponent({
 
 @media (max-width: 1200px) {
   .chat-title {
-    width: 78%;
+    width: 75%;
   }
 }
 
@@ -360,11 +362,8 @@ export default defineComponent({
     width: 70%;
   }
   .centerY {
-    display: flex;
-    align-items: flex-end;
     flex-direction: row;
-    justify-content: flex-end;
-    width: 25%;
+    width: 23%;
   }
 
   .chat-dialog {
@@ -379,6 +378,15 @@ export default defineComponent({
 
   .chat-dialog {
     width: 80%;
+  }
+}
+
+@media (max-width: $breakpoint-xs-max) {
+  .chat-title {
+    width: 50%;
+  }
+  .centerY {
+    width: 45%;
   }
 }
 

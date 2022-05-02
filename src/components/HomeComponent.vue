@@ -9,6 +9,7 @@ interface Commands {
 
 interface State {
   commands: Commands[];
+  newMessage: string;
 }
 
 export default defineComponent({
@@ -57,7 +58,26 @@ export default defineComponent({
           @-symbol.`,
         },
       ],
+      newMessage: '',
     };
+  },
+  methods: {
+    async send() {
+      if (this.newMessage.startsWith('/join')) {
+        await this.$commandService.command(this.newMessage);
+        this.newMessage = '';
+        return;
+      }
+
+      this.newMessage = '';
+    },
+    async typing(event: KeyboardEvent) {
+      event.preventDefault();
+
+      if (event.key === 'Enter') {
+        await this.send();
+      }
+    },
   },
 });
 </script>
@@ -95,6 +115,21 @@ export default defineComponent({
             </q-item-section>
           </q-item>
         </q-list>
+        <q-footer>
+          <q-toolbar class="bg-grey-3 text-black row">
+            <q-input
+              rounded
+              outlined
+              dense
+              class="WAL__field col-grow q-mr-sm"
+              bg-color="white"
+              v-model="newMessage"
+              placeholder="Type a message"
+              @keyup="typing"
+            />
+            <q-btn round flat icon="send" @click="send" />
+          </q-toolbar>
+        </q-footer>
       </div>
     </div>
   </q-page-container>
