@@ -1,6 +1,6 @@
 import type { BootCallback } from '@quasar/app';
 import { StateInterface } from 'src/store';
-import { Notify } from 'quasar';
+import { AppVisibility, Notify } from 'quasar';
 
 export type BootParams<
   T extends BootCallback<StateInterface> = BootCallback<StateInterface>
@@ -13,24 +13,24 @@ export class PopUpService {
     this.params = params;
   }
 
-  public async createPopUp(
+  public createPopUp(
     message: string,
     color: 'red' | 'green',
     actions?: unknown[]
-  ): Promise<void> {
+  ): void {
     const pattern = /\B@[a-z0-9_-]+/gi;
     const found: string[] = message.match(pattern) ?? [];
     const nick = this.params?.store.state.userStore.user?.nickName as string;
     const isMention: boolean = found.includes(`@${nick}`);
 
-    console.log(Notification.permission);
-    if (Notification.permission !== 'granted') {
-      const result = await Notification.requestPermission();
-      console.log(result);
-      this.showNotification(message);
-    } else {
-      this.showNotification(message);
-    }
+    // console.log(Notification.permission);
+    // if (Notification.permission !== 'granted') {
+    //   const result = await Notification.requestPermission();
+    //   console.log(result);
+    //   this.showNotification(message);
+    // } else {
+    //   this.showNotification(message);
+    // }
 
     if (isMention || this.params?.store.state.userStore.user?.status === 1) {
       Notify.create({
@@ -42,8 +42,20 @@ export class PopUpService {
     }
   }
 
-  private showNotification(msg: string) {
-    const notification = new Notification('Swapper notify', { body: msg });
-    console.log(notification);
+  public showMessageNotifications(
+    message: string,
+    color: 'red' | 'green',
+    channel_name: string,
+    message_author: string,
+    actions?: unknown[]
+  ): void {
+    if (AppVisibility.appVisible) {
+      this.createPopUp(message, color, actions);
+    } else {
+      const notification = new Notification(`New message in ${channel_name}`, {
+        body: `${message_author}: ${message}`,
+      });
+      console.log(notification);
+    }
   }
 }

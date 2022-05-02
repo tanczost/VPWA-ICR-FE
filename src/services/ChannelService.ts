@@ -34,7 +34,20 @@ class ChannelSocketManager extends SocketManager {
           },
         },
       ];
-      popUpService.createPopUp(message.content.text, 'green', actions);
+      const channel = store.state.channelStore.channels.find(
+        (channel) => channel.id === +channelId
+      );
+      if (!channel) {
+        return;
+      }
+      popUpService.showMessageNotifications(
+        message.content.text,
+        'green',
+        channel.name,
+        message.author.nickName,
+        actions
+      );
+
       // eslint-disable-next-line @typescript-eslint/no-unsafe-call
       store.commit('channelStore/NEW_MESSAGE', { channelId, message });
     });
