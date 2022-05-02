@@ -13,15 +13,24 @@ export class PopUpService {
     this.params = params;
   }
 
-  public createPopUp(
+  public async createPopUp(
     message: string,
     color: 'red' | 'green',
     actions?: unknown[]
-  ): void {
+  ): Promise<void> {
     const pattern = /\B@[a-z0-9_-]+/gi;
     const found: string[] = message.match(pattern) ?? [];
     const nick = this.params?.store.state.userStore.user?.nickName as string;
     const isMention: boolean = found.includes(`@${nick}`);
+
+    console.log(Notification.permission);
+    if (Notification.permission !== 'granted') {
+      const result = await Notification.requestPermission();
+      console.log(result);
+      this.showNotification(message);
+    } else {
+      this.showNotification(message);
+    }
 
     if (isMention || this.params?.store.state.userStore.user?.status === 1) {
       Notify.create({
@@ -31,5 +40,10 @@ export class PopUpService {
         actions: actions,
       });
     }
+  }
+
+  private showNotification(msg: string) {
+    const notification = new Notification('Swapper notify', { body: msg });
+    console.log(notification);
   }
 }
