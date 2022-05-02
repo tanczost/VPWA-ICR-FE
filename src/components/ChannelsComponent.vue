@@ -81,7 +81,7 @@ export default defineComponent({
       })) as boolean;
 
       if (result) {
-        this.$popUpService.createPopUp(
+        await this.$popUpService.createPopUp(
           'Channel  successfully created',
           'green'
         );
@@ -89,7 +89,10 @@ export default defineComponent({
         this.newChannelName = '';
         this.isNewChannelPrivate = false;
       } else {
-        this.$popUpService.createPopUp('Channel can not be created', 'red');
+        await this.$popUpService.createPopUp(
+          'Channel can not be created',
+          'red'
+        );
       }
     },
   },
