@@ -50,8 +50,10 @@ export class PopUpService {
     actions?: unknown[]
   ): void {
     if (AppVisibility.appVisible) {
+      console.log('visibble');
       this.createPopUp(message, color, actions);
     } else {
+      console.log('not visibble');
       const notification = new Notification(`New message in ${channel_name}`, {
         body: `${message_author}: ${message}`,
       });

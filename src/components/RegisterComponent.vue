@@ -73,7 +73,7 @@ export default defineComponent({
       }
 
       void this.$store.dispatch('userStore/register', data).then(async () => {
-        await this.$popUpService.createPopUp('Register successful', 'green');
+        this.$popUpService.createPopUp('Register successful', 'green');
         return this.$router.push(this.redirectTo);
       });
     },
