@@ -113,7 +113,7 @@ export default defineComponent({
         >
           <q-list dense bordered padding>
             <p
-              v-if="getPublicChannels.length == 0"
+              v-if="getPrivateChannels.length == 0"
               style="padding-left: 16px; padding-top: 16px"
             >
               You aree not in any private channel
