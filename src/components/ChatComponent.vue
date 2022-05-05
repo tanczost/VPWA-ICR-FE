@@ -81,8 +81,12 @@ export default defineComponent({
       deep: true,
     },
   },
+  created() {
+    this.LOADING_START();
+  },
   mounted() {
     this.scrollToElement();
+    this.LOADING_SUCCESS(-1);
   },
   methods: {
     async scrollChannel(info: { ref: QScrollArea }): Promise<void> {
