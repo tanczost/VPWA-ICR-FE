@@ -46,7 +46,7 @@ const actions: ActionTree<ChannelStateInterface, StateInterface> = {
     } catch (error) {
       const newChannel = await channelService.joinPublicChannel(channel.name);
 
-      this.commit('channelStore/addChannel', { ...newChannel });
+      this.commit('channelStore/addChannel', { ...newChannel, typers: [] });
       this.commit('channelStore/SET_ACTIVE', newChannel.id);
 
       console.error(error);

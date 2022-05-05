@@ -40,6 +40,11 @@ export class CommandService {
         color: 'green',
       });
     }
+
+    const destination = {
+      name: 'home',
+    } as RouteLocationRaw;
+    void this.params?.router.push(destination);
   }
 
   public async command(message: string) {
@@ -84,9 +89,9 @@ export class CommandService {
           channelId: this.params?.store.state.channelStore.active,
         });
         break;
-      case message.startsWith('/quitChannel'):
+      case message.startsWith('/quit'):
         await this.params?.store.dispatch(
-          'channelStore/quit',
+          'channelStore/quitChannel',
           this.params.store.state.channelStore.active
         );
         break;

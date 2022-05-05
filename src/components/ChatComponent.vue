@@ -1,4 +1,5 @@
 <script lang="ts">
+import { DateTime } from 'luxon';
 import { QScrollArea } from 'quasar';
 import { defineComponent, PropType } from 'vue';
 import { RouteLocationRaw } from 'vue-router';
@@ -90,9 +91,10 @@ export default defineComponent({
         info.ref.getScroll().verticalPercentage < 0.13
       ) {
         const activeId = this.$store.state.channelStore.active;
-        const lastMessageDate = this.$store.state.channelStore.channels.find(
-          (channel) => channel.id === activeId
-        )?.messages[0].createdAt;
+        const lastMessageDate =
+          this.$store.state.channelStore.channels.find(
+            (channel) => channel.id === activeId
+          )?.messages[0].createdAt ?? DateTime.now();
         this.LOADING_START();
         await this.loadMessages({
           channelId: activeId,
