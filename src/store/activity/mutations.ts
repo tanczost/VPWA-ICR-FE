@@ -19,7 +19,6 @@ const mutation: MutationTree<ActivityStateInterface> = {
 
     if (!isInUsers) {
       state.users.push({ username: userNick, state: 1 });
-      console.log('added ', userNick);
     }
   },
   removeUserActivity(state: ActivityStateInterface, userNick: string) {
@@ -39,7 +38,6 @@ const mutation: MutationTree<ActivityStateInterface> = {
 
     if (!isInUsers) {
       state.users.push({ username: userNick, state: 3 });
-      console.log('removed ', userNick);
     }
   },
   addAllOnlineUsers(
@@ -65,12 +63,6 @@ const mutation: MutationTree<ActivityStateInterface> = {
         state: userData.notify,
       });
     }
-    console.log(
-      'Added to activity store -> ',
-      userData.nickName,
-      ' ',
-      userData.notify
-    );
   },
   changeStatus(
     state: ActivityStateInterface,

@@ -136,7 +136,6 @@ export default defineComponent({
     },
     scrollToElement() {
       const el = this.$refs.bottom as Element;
-      console.log('scrollToElement');
       if (el) {
         el.scrollIntoView({ behavior: 'smooth' });
       }

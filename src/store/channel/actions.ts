@@ -158,7 +158,6 @@ const actions: ActionTree<ChannelStateInterface, StateInterface> = {
     { channelId, date }: { channelId: number; date: DateTime }
   ) {
     try {
-      console.log('Loading new messages');
       commit('LOADING_START');
       const socket = channelService.in(channelId);
       const messages = await socket?.loadNewMessages(date);

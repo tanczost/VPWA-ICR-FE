@@ -24,7 +24,6 @@ class AuthService {
       .then((response) => response.data)
       .catch((error: AxiosError) => {
         if (error.response?.status === 401) {
-          console.log('hello');
           return null;
         }
 

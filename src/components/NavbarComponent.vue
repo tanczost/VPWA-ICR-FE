@@ -54,7 +54,6 @@ export default defineComponent({
       if (index === this.$store.state.userStore.user?.status) {
         return;
       }
-      console.log(index, this.$store.state.userStore.user?.status);
       if (index === 3) {
         this.disconnectFromChannels();
       }

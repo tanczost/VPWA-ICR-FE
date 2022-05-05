@@ -13,7 +13,6 @@ interface ActivityUser {
 class ActivitySocketManager extends SocketManager {
   public subscribe({ store }: BootParams): void {
     this.socket.on('user:list', (onlineUsers: ActivityUser[]) => {
-      console.log('Online users list ->');
       onlineUsers.forEach((user) => {
         if (user.notify) {
           store.commit('activityStore/addAllOnlineUsers', {
@@ -27,17 +26,13 @@ class ActivitySocketManager extends SocketManager {
           });
         }
       });
-      // console.log('Online users list', onlineUsers);
-      // store.commit('activityStore/addUserActivity', onlineUsers);
     });
 
     this.socket.on('user:online', (userNick: string) => {
-      console.log('User is online', userNick);
       store.commit('activityStore/addUserActivity', userNick);
     });
 
     this.socket.on('user:offline', (userNick: string) => {
-      console.log('User is offline', userNick);
       store.commit('activityStore/removeUserActivity', userNick);
     });
 
@@ -72,7 +67,6 @@ class ActivityService {
   private activitySocket: ActivitySocketManager | null = null;
 
   public join(): ActivitySocketManager {
-    console.log(this.activitySocket);
     if (this.activitySocket !== null) {
       return this.activitySocket;
     }

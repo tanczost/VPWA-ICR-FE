@@ -24,7 +24,6 @@ class NotificationService {
   // private notificationSocket: NotificationSocketManager;
 
   public join(): NotificationSocketManager {
-    console.log(this.notificationSocket);
     if (this.notificationSocket !== null) {
       return this.notificationSocket;
     }

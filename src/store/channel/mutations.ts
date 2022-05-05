@@ -126,7 +126,7 @@ const mutation: MutationTree<ChannelStateInterface> = {
 
   connectToChannels(state: ChannelStateInterface) {
     const channels = state.channels ?? [];
-    console.log(channels);
+    channels;
     channels.forEach((c) => {
       if (c.id) channelService.join(c.id);
     });
