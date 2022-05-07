@@ -98,7 +98,7 @@ export default defineComponent({
         const lastMessageDate =
           this.$store.state.channelStore.channels.find(
             (channel) => channel.id === activeId
-          )?.messages[0].createdAt ?? DateTime.now();
+          )?.messages[0]?.createdAt ?? DateTime.now();
         this.LOADING_START();
         await this.loadMessages({
           channelId: activeId,
