@@ -89,6 +89,14 @@ export default defineComponent({
     this.LOADING_SUCCESS(-1);
   },
   methods: {
+    formatDate(inputDate: string): string {
+      const date = DateTime.fromISO(inputDate);
+      if (date.hasSame(DateTime.local(), 'day')) {
+        return date.toFormat('T');
+      }
+
+      return date.toFormat('D');
+    },
     async scrollChannel(info: { ref: QScrollArea }): Promise<void> {
       if (
         !this.getLoadingState &&
@@ -203,7 +211,7 @@ export default defineComponent({
             :key="message.id"
             :name="message.author.nickName"
             :text="[message.content.text]"
-            :stamp="message.createdAt.toString()"
+            :stamp="formatDate(message.createdAt.toString())"
             :sent="isMine(message)"
             :class="{ msg: true, mention: isMention(message.content.mentions) }"
           />
